@@ -20,23 +20,22 @@ public class Config {
 
         // check if the config does not already exist
         if(!alreadyExist) {
-            // if it does not, we create the file and
-            // get the default config from the resources
-            FileIO.createFile(file);
+            // if it does not, we get the default config from the resources
             InputStream configDefault = getClass().getResourceAsStream("/assets/config_defaults/" + defaults);
 
             // if it's not null (that means that it exists)
             if(configDefault != null) {
+                // we create the file (+ parent folders if needed)
                 // we write the config and close the stream
+                FileIO.createFile(file);
                 FileIO.write(file, configDefault);
                 configDefault.close();
             } else {
                 // if the config does not exist,
-                // we set the properties to null and return
+                // we stop the program
                 System.out.println("Default for '" + defaults + "' not found!");
 
-                this.properties = null;
-                return;
+                System.exit(0);
             }
         }
 

@@ -28,7 +28,9 @@ public class ReplayZip {
     }
 
     public InputStream getEntry(String entry) {
-        if(zipFile == null) return null;
+        if(zipFile == null) {
+            return null;
+        }
 
         InputStream out = null;
 
@@ -42,7 +44,10 @@ public class ReplayZip {
     }
 
     public boolean hasEntry(String entry) {
-        if(zipFile == null) return false;
+        if(zipFile == null) {
+            return false;
+        }
+
         return zipFile.getEntry(entry) != null;
     }
 
@@ -67,7 +72,9 @@ public class ReplayZip {
      * @param entry Entry name in zip file
      */
     public void addFile(File file, String entry) {
-        if(file == null) return;
+        if(file == null) {
+            return;
+        }
 
         try {
             addFile(new FileInputStream(file), entry);
@@ -77,7 +84,9 @@ public class ReplayZip {
     }
 
     public void addFile(InputStream entryData, String entry) {
-        if(file == null) return;
+        if(file == null) {
+            return;
+        }
 
         try {
             writeEntry(entryData, entry);
@@ -103,7 +112,9 @@ public class ReplayZip {
      * Close all opened streams
      */
     public void close() {
-        if(file == null) return;
+        if(file == null) {
+            return;
+        }
 
         try {
             ZipEntry entry = inputStream.getNextEntry();
