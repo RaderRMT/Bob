@@ -11,7 +11,7 @@ public class BobConfig {
     public BobConfig() throws IOException {
         this.config = new Config(OS.getBobFolder(),"settings.nbt");
 
-        if(!config.alreadyExisted()) {
+        if(!config.alreadyExist()) {
             config.getProperties().get("workingDirectory").getAsTagString().setValue(OS.getBobFolder());
             config.save();
         }

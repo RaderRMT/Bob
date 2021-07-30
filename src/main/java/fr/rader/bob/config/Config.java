@@ -12,15 +12,17 @@ public class Config {
 
     private final TagCompound properties;
     private final File file;
-    private final boolean alreadyExisted;
+    private final boolean alreadyExist;
 
     public Config(String outputFolder, String defaults) throws IOException {
         this.file = new File(outputFolder + defaults);
-        this.alreadyExisted = file.exists();
+        this.alreadyExist = file.exists();
 
         // check if the config does not already exist
-        if(!alreadyExisted) {
-            // if it does not, we get the default config from the resources
+        if(!alreadyExist) {
+            // if it does not, we create the file and
+            // get the default config from the resources
+            FileIO.createFile(file);
             InputStream configDefault = getClass().getResourceAsStream("/assets/config_defaults/" + defaults);
 
             // if it's not null (that means that it exists)
@@ -54,7 +56,7 @@ public class Config {
         return properties;
     }
 
-    public boolean alreadyExisted() {
-        return alreadyExisted;
+    public boolean alreadyExist() {
+        return alreadyExist;
     }
 }

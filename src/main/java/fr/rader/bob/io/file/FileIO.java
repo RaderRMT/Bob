@@ -43,13 +43,15 @@ public class FileIO {
         }
 
         if(!file.exists()) {
-            if(file.getParentFile().mkdirs()) {
-                if(!file.createNewFile()) {
-                    System.out.println("Could not create file");
+            if(!file.getParentFile().exists()) {
+                if(!file.getParentFile().mkdirs()) {
+                    System.out.println("Could not create file's directories, they might already exist");
                     return false;
                 }
-            } else {
-                System.out.println("Could not create file's directories, they might already exist");
+            }
+
+            if(!file.createNewFile()) {
+                System.out.println("Could not create file");
                 return false;
             }
         } else {
