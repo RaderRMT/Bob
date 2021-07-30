@@ -1,0 +1,167 @@
+# Spawn Entity
+packet 0 {
+    varint "Entity ID";
+    uuid "Object UUID";
+    varint "Type";
+
+    double "X";
+    double "Y";
+    double "Z";
+
+    angle "Pitch";
+    angle "Yaw";
+
+    int "Data";
+
+    short "Velocity X";
+    short "Velocity Y";
+    short "Velocity Z";
+}
+
+# Spawn Experience Orb
+packet 1 {
+    varint "Entity ID";
+
+    double "X";
+    double "Y";
+    double "Z";
+
+    short "Count";
+}
+
+# Spawn Living Entity
+packet 2 {
+    varint "Entity ID";
+    uuid "Entity UUID";
+    varint "Type";
+
+    double "X";
+    double "Y";
+    double "Z";
+
+    angle "Yaw";
+    angle "Pitch";
+    angle "Head Pitch";
+
+    short "Velocity X";
+    short "Velocity Y";
+    short "Velocity Z";
+}
+
+# Spawn Painting
+packet 3 {
+    varint "Entity ID";
+    uuid "Entity UUID";
+    varint "Motive";
+    position "Location";
+    byte "Direction";
+}
+
+# Spawn Player
+packet 4 {
+    varint "Entity ID";
+    uuid "Player UUID";
+
+    double "X";
+    double "Y";
+    double "Z";
+
+    angle "Yaw";
+    angle "Pitch";
+}
+
+# Entity Animation
+packet 5 {
+    varint "Entity ID";
+    byte "Animation";
+}
+
+# Statistics
+packet 6 {
+    varint "Count";
+
+    array("Count", "Statistic") {
+        varint "Category ID";
+        varint "Statistic ID";
+        varint "Value";
+    }
+}
+
+# Acknowledge Player Digging
+packet 7 {
+    position "Location";
+    varint "Block";
+    varint "Status";
+    boolean "Successful";
+}
+
+# Block Break Animation
+packet 8 {
+    varint "Entity ID";
+    position "Location";
+    byte "Destroy Stage";
+}
+
+# Block Entity Data
+packet 9 {
+    position "Location";
+    byte "Action";
+    nbt "NBT Data";
+}
+
+# Block Action
+packet 10 {
+    position "Location";
+    byte "Action ID";
+    byte "Action Param";
+    varint "Block Type";
+}
+
+# Block Change
+packet 11 {
+    position "Location";
+    varint "Block ID";
+}
+
+# Boss Bar
+packet 12 {
+    uuid "UUID";
+    varint "Action";
+
+    match "Action" {
+        # Add
+        0 => {
+            chat "Title";
+            float "Health";
+            varint "Color";
+            varint "Division";
+            byte "Flags";
+        }
+
+        # Action == 1 has no fields,
+        # it's used to remove the boss bar
+
+        # Update health
+        2 => {
+            float "Health";
+        }
+
+        # Update title
+        3 => {
+            chat "Title";
+        }
+
+        # Update style
+        4 => {
+            varint "Color";
+            varint "Dividers";
+        }
+
+        # Update flags
+        5 => {
+            byte "Flags";
+        }
+    }
+}
+
+# Server Difficulty
