@@ -10,14 +10,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProjectsConfig {
+public class ProjectsConfig extends Config {
 
     private final List<String> projects;
-    private final Config config;
 
     public ProjectsConfig() throws IOException {
+        super(OS.getBobFolder() + "projects/", "projects.nbt");
+
         this.projects = new ArrayList<>();
-        this.config = new Config(OS.getBobFolder() + "projects/", "projects.nbt");
     }
 
     public void addProject(String project) {
@@ -36,14 +36,15 @@ public class ProjectsConfig {
         projects.remove(project);
     }
 
+    @Override
     public void save() {
-        TagList<TagString> projectsList = config.getProperties().get("projects").getAsStringList();
+        TagList<TagString> projectsList = getProperties().get("projects").getAsStringList();
 
         projectsList.getTags().clear();
         for(String project : projects) {
             projectsList.add(new TagString(project));
         }
 
-        config.save();
+        writeToConfig();
     }
 }

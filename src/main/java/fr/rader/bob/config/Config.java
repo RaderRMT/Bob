@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class Config {
+public abstract class Config {
 
     private final TagCompound properties;
     private final File file;
@@ -43,7 +43,9 @@ public class Config {
         this.properties = NBTFileIO.read(file);
     }
 
-    public void save() {
+    public abstract void save();
+
+    void writeToConfig() {
         NBTFileIO.write(getConfigFile(), getProperties());
     }
 

@@ -4,28 +4,27 @@ import fr.rader.bob.utils.OS;
 
 import java.io.IOException;
 
-public class BobConfig {
-
-    private final Config config;
+public class BobConfig extends Config {
 
     public BobConfig() throws IOException {
-        this.config = new Config(OS.getBobFolder(),"settings.nbt");
+        super(OS.getBobFolder(), "settings.nbt");
 
-        if(!config.alreadyExist()) {
-            config.getProperties().get("workingDirectory").getAsTagString().setValue(OS.getBobFolder());
-            config.save();
+        if(!alreadyExist()) {
+            getProperties().get("workingDirectory").getAsTagString().setValue(OS.getBobFolder());
+            save();
         }
     }
 
     public String getProperty(String key) {
-        return config.getProperties().get(key).getAsString();
+        return getProperties().get(key).getAsString();
     }
 
     public void setProperty(String key, String value) {
-        config.getProperties().get(key).getAsTagString().setValue(value);
+        getProperties().get(key).getAsTagString().setValue(value);
     }
 
+    @Override
     public void save() {
-        config.save();
+        writeToConfig();
     }
 }

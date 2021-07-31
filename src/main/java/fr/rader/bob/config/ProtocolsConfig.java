@@ -4,12 +4,10 @@ import fr.rader.bob.utils.OS;
 
 import java.io.IOException;
 
-public class ProtocolsConfig {
-
-    private final Config config;
+public class ProtocolsConfig extends Config {
 
     public ProtocolsConfig() throws IOException {
-        this.config = new Config(OS.getBobFolder() + "resources/assets/protocols/", "protocols.nbt");
+        super(OS.getBobFolder() + "resources/assets/protocols/", "protocols.nbt");
     }
 
     public void addUselessPacket(int packetID) {
@@ -32,7 +30,8 @@ public class ProtocolsConfig {
         return false;
     }
 
+    @Override
     public void save() {
-        config.save();
+        writeToConfig();
     }
 }
