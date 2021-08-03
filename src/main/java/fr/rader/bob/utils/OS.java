@@ -1,6 +1,6 @@
 package fr.rader.bob.utils;
 
-import fr.rader.bob.config.BobConfig;
+import fr.rader.bob.configs.BobConfig;
 import fr.rader.bob.Main;
 import org.lwjgl.LWJGLUtil;
 

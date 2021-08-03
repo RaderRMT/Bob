@@ -1,4 +1,4 @@
-package fr.rader.bob.config;
+package fr.rader.bob.configs;
 
 import fr.rader.bob.utils.OS;
 

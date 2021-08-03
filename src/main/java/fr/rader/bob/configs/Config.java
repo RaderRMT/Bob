@@ -1,4 +1,4 @@
-package fr.rader.bob.config;
+package fr.rader.bob.configs;
 
 import fr.rader.bane.nbt.tags.TagCompound;
 import fr.rader.bob.io.file.FileIO;
@@ -11,46 +11,46 @@ import java.io.InputStream;
 public abstract class Config {
 
     private final TagCompound properties;
-    private final File file;
+    private final File configFile;
     private final boolean alreadyExist;
 
-    public Config(String outputFolder, String defaults) throws IOException {
-        this.file = new File(outputFolder + defaults);
-        this.alreadyExist = file.exists();
+    public Config(String folder, String configName) throws IOException {
+        this.configFile = new File(folder + configName);
+        this.alreadyExist = configFile.exists();
 
         // check if the config does not already exist
         if(!alreadyExist) {
             // if it does not, we get the default config from the resources
-            InputStream configDefault = getClass().getResourceAsStream("/assets/config_defaults/" + defaults);
+            InputStream configDefault = getClass().getResourceAsStream("/assets/config_defaults/" + configName);
 
             // if it's not null (that means that it exists)
             if(configDefault != null) {
                 // we create the file (+ parent folders if needed)
                 // we write the config and close the stream
-                FileIO.createFile(file);
-                FileIO.write(file, configDefault);
+                FileIO.createFile(configFile);
+                FileIO.write(configFile, configDefault);
                 configDefault.close();
             } else {
                 // if the config does not exist,
                 // we stop the program
-                System.out.println("Default for '" + defaults + "' not found!");
+                System.out.println("Default for '" + configName + "' not found!");
 
                 System.exit(0);
             }
         }
 
         // we read the properties from the config file
-        this.properties = NBTFileIO.read(file);
+        this.properties = NBTFileIO.read(configFile);
     }
 
     public abstract void save();
 
-    void writeToConfig() {
+    protected void writeToConfig() {
         NBTFileIO.write(getConfigFile(), getProperties());
     }
 
     public File getConfigFile() {
-        return this.file;
+        return this.configFile;
     }
 
     public TagCompound getProperties() {

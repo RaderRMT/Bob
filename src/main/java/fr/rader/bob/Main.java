@@ -1,8 +1,8 @@
 package fr.rader.bob;
 
-import fr.rader.bob.config.BobConfig;
-import fr.rader.bob.config.ProjectsConfig;
-import fr.rader.bob.config.ProtocolsConfig;
+import fr.rader.bob.configs.BobConfig;
+import fr.rader.bob.configs.ProtocolsConfig;
+import fr.rader.bob.project.ProjectManager;
 
 import java.io.IOException;
 
@@ -11,8 +11,9 @@ public class Main {
     private static Main instance;
 
     private final ProtocolsConfig protocolsConfig;
-    private final ProjectsConfig projectsConfig;
     private final BobConfig bobConfig;
+
+    private final ProjectManager projectManager;
 
     public void start() {
     }
@@ -21,8 +22,9 @@ public class Main {
         instance = this;
 
         bobConfig = new BobConfig();
-        projectsConfig = new ProjectsConfig();
         protocolsConfig = new ProtocolsConfig();
+
+        projectManager = new ProjectManager();
     }
 
     public static void main(String[] args) {
@@ -42,11 +44,11 @@ public class Main {
         return protocolsConfig;
     }
 
-    public ProjectsConfig getProjectsConfig() {
-        return projectsConfig;
-    }
-
     public BobConfig getBobConfig() {
         return bobConfig;
+    }
+
+    public ProjectManager getProjectManager() {
+        return projectManager;
     }
 }

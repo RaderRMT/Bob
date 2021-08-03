@@ -24,8 +24,7 @@ public class DataWriter {
 
     public void writeByte(int value) {
         if(index == buffer.length) {
-            stream.write(buffer, 0, index);
-            index = 0;
+            flush();
         }
 
         buffer[index] = (byte) (value & 0xff);
