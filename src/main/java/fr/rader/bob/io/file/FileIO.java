@@ -66,14 +66,19 @@ public class FileIO {
     }
 
     public static boolean createFolder(File file) {
-        if(file.isFile()) {
-            if(!file.delete()) {
-                System.out.println("Could not delete file (same name as folder)");
-                return false;
+        if(file.exists()) {
+            if(file.isFile()) {
+                if(!file.delete()) {
+                    System.out.println("Could not delete file (same name as folder)");
+                    return false;
+                }
+            } else {
+                System.out.println("folder already exist");
+                return true;
             }
         }
 
-        return !file.exists() && file.mkdirs();
+        return file.mkdirs();
     }
 
     public static void deleteDirectory(String directory) {
