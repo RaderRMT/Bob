@@ -35,30 +35,28 @@ public class FileIO {
     }
 
     public static boolean createFile(File file) throws IOException {
-        if(file.isDirectory()) {
-            if(!file.delete()) {
-                System.out.println("Could not delete folder (same name as file)");
-                return false;
-            }
-        }
-
-        if(!file.exists()) {
-            if(!file.getParentFile().exists()) {
-                if(!file.getParentFile().mkdirs()) {
-                    System.out.println("Could not create file's directories, they might already exist");
+        // deleting the file if exists and it's a directory
+        if(file.exists()) {
+            if(file.isDirectory()) {
+                if(!file.delete()) {
+                    System.out.println("Could not delete folder (same name as file)");
                     return false;
                 }
+            } else {
+                System.out.println("File already exists");
+                return true;
             }
-
-            if(!file.createNewFile()) {
-                System.out.println("Could not create file");
-                return false;
-            }
-        } else {
-            return false;
         }
 
-        return true;
+        // creating the parent folder if it does not exist
+        if(!file.getParentFile().exists()) {
+            if(!file.getParentFile().mkdirs()) {
+                System.out.println("Could not create parent folder");
+                return false;
+            }
+        }
+
+        return file.createNewFile();
     }
 
     public static boolean createFolder(String file) {
