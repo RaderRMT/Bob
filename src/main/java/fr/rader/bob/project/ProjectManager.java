@@ -1,6 +1,6 @@
 package fr.rader.bob.project;
 
-import fr.rader.bob.Main;
+import fr.rader.bob.Bob;
 import fr.rader.bob.io.file.FileIO;
 import fr.rader.bob.project.configs.ProjectListConfig;
 
@@ -21,7 +21,7 @@ public class ProjectManager {
         }
 
         boolean projectDirCreated = FileIO.createFolder(
-                Main.getInstance()
+                Bob.getInstance()
                          .getBobConfig()
                          .getProperty("workingDirectory") + "projects/" + name
         );
@@ -38,7 +38,7 @@ public class ProjectManager {
         }
 
         FileIO.deleteDirectory(
-                Main.getInstance()
+                Bob.getInstance()
                     .getBobConfig()
                     .getProperty("workingDirectory") + "projects/" + name
         );

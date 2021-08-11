@@ -1,7 +1,7 @@
 package fr.rader.bob.project.configs;
 
-import fr.rader.bane.nbt.tags.TagList;
-import fr.rader.bane.nbt.tags.TagString;
+import fr.rader.bane.tags.TagList;
+import fr.rader.bane.tags.TagString;
 import fr.rader.bob.configs.Config;
 import fr.rader.bob.utils.OS;
 

@@ -1,6 +1,6 @@
 package fr.rader.bob.configs;
 
-import fr.rader.bane.nbt.tags.TagCompound;
+import fr.rader.bane.tags.TagCompound;
 import fr.rader.bob.io.file.FileIO;
 import fr.rader.bob.io.file.NBTFileIO;
 

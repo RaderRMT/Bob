@@ -1,7 +1,7 @@
 package fr.rader.bob.utils;
 
 import fr.rader.bob.io.ReplayZip;
-import fr.rader.bane.nbt.tags.TagCompound;
+import fr.rader.bane.tags.TagCompound;
 
 import java.io.*;
 import java.nio.ByteBuffer;

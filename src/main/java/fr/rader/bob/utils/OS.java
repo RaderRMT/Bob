@@ -1,13 +1,13 @@
 package fr.rader.bob.utils;
 
+import fr.rader.bob.Bob;
 import fr.rader.bob.configs.BobConfig;
-import fr.rader.bob.Main;
 import org.lwjgl.LWJGLUtil;
 
 public class OS {
 
     public static String getBobFolder() {
-        BobConfig settings = Main.getInstance().getBobConfig();
+        BobConfig settings = Bob.getInstance().getBobConfig();
 
         if(settings == null) {
             return System.getProperty("user.home").replaceAll("\\\\", "/") + "/.bob/";

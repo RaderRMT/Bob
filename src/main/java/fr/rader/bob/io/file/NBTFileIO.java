@@ -1,6 +1,6 @@
 package fr.rader.bob.io.file;
 
-import fr.rader.bane.nbt.tags.TagCompound;
+import fr.rader.bane.tags.TagCompound;
 import fr.rader.bob.utils.DataReader;
 import fr.rader.bob.utils.DataWriter;
 
