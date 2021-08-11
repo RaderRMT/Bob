@@ -1,22 +1,22 @@
-package fr.rader.bane.nbt.tags;
+package fr.rader.bane.tags;
 
 import fr.rader.bob.utils.DataWriter;
 
-public class TagByte extends TagBase {
+public class TagInt extends TagBase {
 
-    public static final byte TAG_ID = 1;
+    public static final byte TAG_ID = 3;
 
     private int value;
 
-    public TagByte(int value) {
+    public TagInt(int value) {
         setID(TAG_ID);
-        setValue(value & 0xff);
+        setValue(value);
     }
 
-    public TagByte(String name, int value) {
+    public TagInt(String name, int value) {
         setID(TAG_ID);
         setName(name);
-        setValue(value & 0xff);
+        setValue(value);
     }
 
     public int getValue() {
@@ -24,7 +24,7 @@ public class TagByte extends TagBase {
     }
 
     public void setValue(int value) {
-        this.value = value & 0xff;
+        this.value = value;
     }
 
     @Override
@@ -35,6 +35,6 @@ public class TagByte extends TagBase {
             writer.writeString(getName());
         }
 
-        writer.writeByte(value);
+        writer.writeInt(value);
     }
 }

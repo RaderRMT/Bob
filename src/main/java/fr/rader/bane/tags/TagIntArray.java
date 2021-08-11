@@ -1,29 +1,29 @@
-package fr.rader.bane.nbt.tags;
+package fr.rader.bane.tags;
 
 import fr.rader.bob.utils.DataWriter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TagByteArray extends TagBase {
+public class TagIntArray extends TagBase {
 
-    public static final byte TAG_ID = 7;
+    public static final byte TAG_ID = 11;
 
-    private List<Byte> value;
+    private List<Integer> value;
 
-    public TagByteArray(String name) {
+    public TagIntArray(String name) {
         setID(TAG_ID);
         setName(name);
 
         this.value = new ArrayList<>();
     }
 
-    public TagByteArray(byte[] value) {
+    public TagIntArray(int[] value) {
         setID(TAG_ID);
         setValue(value);
     }
 
-    public TagByteArray(String name, byte[] value) {
+    public TagIntArray(String name, int[] value) {
         setID(TAG_ID);
         setName(name);
 
@@ -34,8 +34,8 @@ public class TagByteArray extends TagBase {
         return value.size();
     }
 
-    public byte[] getValue() {
-        byte[] out = new byte[value.size()];
+    public int[] getValue() {
+        int[] out = new int[value.size()];
 
         for(int i = 0; i < value.size(); i++) {
             out[i] = value.get(i);
@@ -44,7 +44,7 @@ public class TagByteArray extends TagBase {
         return out;
     }
 
-    public void setValue(byte[] value) {
+    public void setValue(int[] value) {
         if(this.value == null) {
             this.value = new ArrayList<>();
         }
@@ -53,16 +53,16 @@ public class TagByteArray extends TagBase {
             return;
         }
 
-        for(byte b : value) {
-            this.value.add(b);
+        for(int i : value) {
+            this.value.add(i);
         }
     }
 
-    public void add(byte value) {
+    public void add(int value) {
         this.value.add(value);
     }
 
-    public byte get(int index) {
+    public int get(int index) {
         validateIndex("get(index)", index);
 
         return this.value.get(index);
@@ -74,7 +74,7 @@ public class TagByteArray extends TagBase {
         this.value.remove(index);
     }
 
-    public void replace(int index, byte value) {
+    public void replace(int index, int value) {
         validateIndex("replace(index, value)", index);
 
         this.value.set(index, value);
@@ -82,11 +82,11 @@ public class TagByteArray extends TagBase {
 
     private void validateIndex(String method, int index) {
         if(this.value.size() == 0) {
-            throw new IndexOutOfBoundsException("[TagByteArray] -> [#" + method + "] cannot replace value in an empty list (index is " + index + ")");
+            throw new IndexOutOfBoundsException("[TagIntArray] -> [#" + method + "] cannot replace value in an empty list (index is " + index + ")");
         }
 
         if(index < 0 || index >= this.value.size()) {
-            throw new IndexOutOfBoundsException("[TagByteArray] -> [#" + method + "] index must be " + ((this.value.size() == 1) ? "" : "between 0 and ") + (this.value.size() - 1) + " (index is " + index + ")");
+            throw new IndexOutOfBoundsException("[TagIntArray] -> [#" + method + "] index must be " + ((this.value.size() == 1) ? "" : "between 0 and ") + (this.value.size() - 1) + " (index is " + index + ")");
         }
     }
 
@@ -99,6 +99,6 @@ public class TagByteArray extends TagBase {
         }
 
         writer.writeInt(value.size());
-        writer.writeByteArray(getValue());
+        writer.writeIntArray(getValue());
     }
 }

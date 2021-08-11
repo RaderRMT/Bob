@@ -1,4 +1,4 @@
-package fr.rader.bane.nbt.tags;
+package fr.rader.bane.tags;
 
 import fr.rader.bob.utils.DataReader;
 import fr.rader.bob.utils.DataWriter;
