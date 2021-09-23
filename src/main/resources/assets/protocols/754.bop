@@ -77,15 +77,8 @@ packet 5 {
 }
 
 # Statistics
-packet 6 {
-    varint "Count";
-
-    array("Count", "Statistic") {
-        varint "Category ID";
-        varint "Statistic ID";
-        varint "Value";
-    }
-}
+# This packet is not required as it
+# does not affect the final render
 
 # Acknowledge Player Digging
 packet 7 {
@@ -124,44 +117,105 @@ packet 11 {
 }
 
 # Boss Bar
-packet 12 {
-    uuid "UUID";
-    varint "Action";
-
-    match "Action" {
-        # Add
-        0 => {
-            chat "Title";
-            float "Health";
-            varint "Color";
-            varint "Division";
-            byte "Flags";
-        }
-
-        # Action == 1 has no fields,
-        # it's used to remove the boss bar
-
-        # Update health
-        2 => {
-            float "Health";
-        }
-
-        # Update title
-        3 => {
-            chat "Title";
-        }
-
-        # Update style
-        4 => {
-            varint "Color";
-            varint "Dividers";
-        }
-
-        # Update flags
-        5 => {
-            byte "Flags";
-        }
-    }
-}
+# This packet is not required as it
+# does not affect the final render
 
 # Server Difficulty
+# This packet is not required as it
+# does not affect the final render
+
+# Chat Message
+# This packet is not required as it
+# does not affect the final render
+
+# Tab-Complete
+# This packet is not required as it
+# does not affect the final render
+
+# Declare Commands
+# This packet is not required as it
+# does not affect the final render
+
+# Window Confirmation
+# This packet is not required as it
+# does not affect the final render
+
+# Close Window
+# This packet is not required as it
+# does not affect the final render
+
+# Window Items
+# This packet is not required as it
+# does not affect the final render
+
+# Window Property
+# This packet is not required as it
+# does not affect the final render
+
+# Set Slot
+packet 21 {
+    byte "Window ID";
+    short "Slot";
+    slot "Slot Data";
+}
+
+# Set Cooldown
+# This packet is not required as it
+# does not affect the final render
+
+# Plugin Message
+# This packet is ignored by Bob.
+
+# Named Sound Effect
+# This packet is not required as it
+# does not affect the final render
+
+# Disconnect
+packet 25 {
+    chat "Reason";
+}
+
+# Entity Status
+packet 26 {
+    int "Entity ID";
+    byte "Entity Status";
+}
+
+# Explosion
+# https://www.youtube.com/watch?v=jar1LTxxAeM
+packet 27 {
+    float "X";
+    float "Y";
+    float "Z";
+    float "Strength";
+
+    int "Record Count";
+    array("Record Count", "Records") {
+        byte "X";
+        byte "Y";
+        byte "Z";
+    }
+
+    float "Player Motion X";
+    float "Player Motion Y";
+    float "Player Motion Z";
+}
+
+# Unload Chunk
+packet 28 {
+    int "Chunk X";
+    int "Chunk Z";
+}
+
+# Change Game State
+packet 29 {
+    byte "Reason";
+    float "Value";
+}
+
+# Open Horse Window
+# This packet is not required as it
+# does not affect the final render
+
+# Keep Alive
+# This packet is handled automatically by Bob.
