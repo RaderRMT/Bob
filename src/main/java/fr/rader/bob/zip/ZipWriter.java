@@ -20,7 +20,7 @@ public class ZipWriter {
     private ZipOutputStream outputStream;       // this is the OutputStream we're using to write ZIP entries
 
     /**
-     * Allows to write ZIP file
+     * Allows us to write ZIP file
      *
      * @param path Path to the ZIP file to write
      */
@@ -29,7 +29,7 @@ public class ZipWriter {
     }
 
     /**
-     * Allows to write ZIP file
+     * Allows us to write ZIP file
      *
      * @param file ZIP file to write
      */
