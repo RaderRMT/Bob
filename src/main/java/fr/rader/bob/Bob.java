@@ -1,5 +1,7 @@
 package fr.rader.bob;
 
+import fr.rader.bob.logger.Logger;
+
 public class Bob {
 
     public Bob() {
@@ -8,5 +10,6 @@ public class Bob {
     }
 
     void start() {
+        Logger.info("Starting Bob.");
     }
 }

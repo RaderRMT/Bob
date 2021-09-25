@@ -51,4 +51,41 @@ public class FileUtils {
         // returning the newly-created file
         return file;
     }
+
+    /**
+     * Delete a directory and it's contents
+     *
+     * @param path The path to the directory to delete
+     * @return true if the directory has been deleted, false otherwise
+     */
+    public static boolean deleteDirectory(String path) {
+        return deleteDirectory(new File(path));
+    }
+
+    /**
+     * Delete a directory and it's contents
+     *
+     * @param directory The directory to delete
+     * @return true if the directory has been deleted, false otherwise
+     */
+    public static boolean deleteDirectory(File directory) {
+        // get all files in the directory
+        File[] directoryFiles = directory.listFiles();
+
+        // if it's null, so if the directory does not exist
+        // we return false because we cannot delete a directory
+        // that doesn't exist
+        if (directoryFiles == null) {
+            return false;
+        }
+
+        // here, we delete the file, or the directory (by recursion)
+        // and keep track of if everything has been deleted
+        boolean isEverythingDeleted = true;
+        for (File file : directoryFiles) {
+            isEverythingDeleted &= (file.isDirectory()) ? deleteDirectory(file) : file.delete();
+        }
+
+        return isEverythingDeleted & directory.delete();
+    }
 }

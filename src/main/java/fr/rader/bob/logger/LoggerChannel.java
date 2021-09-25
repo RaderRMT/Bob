@@ -19,12 +19,16 @@ public enum LoggerChannel {
         this.logName = logName;
 
         try {
+            // create the log file
             File log = FileUtils.makeFile(getLogPath(), true);
 
+            // we throw an IllegalStateException if we
+            // cannot create the log file.
             if (log == null) {
                 throw new IllegalStateException("Log cannot be created");
             }
 
+            // create the writer for this log
             this.writer = new FileWriter(log);
         } catch (IOException e) {
             e.printStackTrace();

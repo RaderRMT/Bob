@@ -4,6 +4,7 @@ import fr.rader.bob.OS;
 import fr.rader.bob.utils.DateUtils;
 
 import java.io.FileWriter;
+import java.io.PrintWriter;
 
 public class Logger {
 
@@ -52,6 +53,18 @@ public class Logger {
 
     public static void error(LoggerChannel channel, String message) {
         write(channel, ERROR_LABEL, message);
+    }
+
+    public static void printStackTrace(Exception exception) {
+        printStackTrace(LoggerChannel.DEFAULT, exception);
+    }
+
+    public static void printStackTrace(LoggerChannel channel, Exception exception) {
+        PrintWriter channelPrintWriter = new PrintWriter(channel.getWriter());
+
+        exception.printStackTrace(channelPrintWriter);
+
+        channelPrintWriter.close();
     }
 
     private static void write(LoggerChannel channel, String label, String message) {
