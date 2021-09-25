@@ -13,6 +13,8 @@ public class Shutdown extends Thread {
 
     @Override
     public void run() {
+        Logger.error("World exploded!"); // end of log message
+
         // flush then close the log channels
         try {
             for (LoggerChannel channel : LoggerChannel.values()) {
@@ -35,7 +37,7 @@ public class Shutdown extends Thread {
 
             zipWriter.close();
         } catch (IOException e) {
-            Logger.printStackTrace(e);
+            e.printStackTrace();
         }
 
         // delete the current log directory as it's now a zip
