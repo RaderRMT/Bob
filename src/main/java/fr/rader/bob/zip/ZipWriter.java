@@ -8,6 +8,8 @@ import java.util.zip.ZipOutputStream;
 
 public class ZipWriter {
 
+    private final int BUFFER_SIZE = 8192;
+
     /**
      * The ZIP file we're creating
      */
@@ -74,7 +76,7 @@ public class ZipWriter {
 
         // writing the file to the zip
         int length;
-        byte[] buffer = new byte[8192];
+        byte[] buffer = new byte[BUFFER_SIZE];
         while ((length = entryInputStream.read(buffer)) > 0) {
             outputStream.write(buffer, 0, length);
         }
