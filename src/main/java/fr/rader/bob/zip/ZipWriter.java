@@ -11,7 +11,7 @@ public class ZipWriter {
     /**
      * The ZIP file we're creating
      */
-    private final File zipFile;                 // This is our zip file
+    private final File zipFile;                 // this is our zip file
 
     /**
      * Various OutputStreams to make this work
