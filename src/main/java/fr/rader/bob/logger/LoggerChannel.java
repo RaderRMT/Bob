@@ -15,7 +15,7 @@ public enum LoggerChannel {
 
     private final String logName;
 
-    private boolean isClosed = true;
+    private boolean isClosed = false;
 
     LoggerChannel(String logName) {
         this.logName = logName;
@@ -40,7 +40,7 @@ public enum LoggerChannel {
     public void close() throws IOException {
         writer.flush();
         writer.close();
-        isClosed = false;
+        isClosed = true;
     }
 
     public boolean isClosed() {

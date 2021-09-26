@@ -20,6 +20,7 @@ public class Logger {
     private static final String INFO_LABEL = "[INFO]";
     private static final String WARN_LABEL = "[WARN]";
     private static final String ERROR_LABEL = "[ERROR]";
+    private static final String KRAKEN_LABEL = "[KRAKEN]";
 
     /**
      * Path to the main logs folder
@@ -53,6 +54,10 @@ public class Logger {
 
     public static void error(LoggerChannel channel, String message) {
         write(channel, ERROR_LABEL, message);
+    }
+
+    public static void kraken() {
+        write(LoggerChannel.DEFAULT, KRAKEN_LABEL, "Kraken happened, please be nice to it :(");
     }
 
     public static void printStackTrace(Exception exception) {
