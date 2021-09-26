@@ -15,6 +15,8 @@ public enum LoggerChannel {
 
     private final String logName;
 
+    private boolean isClosed = true;
+
     LoggerChannel(String logName) {
         this.logName = logName;
 
@@ -33,6 +35,16 @@ public enum LoggerChannel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void close() throws IOException {
+        writer.flush();
+        writer.close();
+        isClosed = false;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
     }
 
     public FileWriter getWriter() {

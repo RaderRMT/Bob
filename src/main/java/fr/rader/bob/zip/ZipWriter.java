@@ -8,8 +8,6 @@ import java.util.zip.ZipOutputStream;
 
 public class ZipWriter {
 
-    private final int BUFFER_SIZE = 8192;
-
     /**
      * The ZIP file we're creating
      */
@@ -22,7 +20,12 @@ public class ZipWriter {
     private ZipOutputStream outputStream;       // this is the OutputStream we're using to write ZIP entries
 
     /**
-     * Allows us to write ZIP file
+     * Buffer size for the {@link ZipOutputStream#write(byte[], int, int)} method
+     */
+    private final int BUFFER_SIZE = 8192;
+
+    /**
+     * Allows us to write ZIP files
      *
      * @param path Path to the ZIP file to write
      */
@@ -31,7 +34,7 @@ public class ZipWriter {
     }
 
     /**
-     * Allows us to write ZIP file
+     * Allows us to write ZIP files
      *
      * @param file ZIP file to write
      */

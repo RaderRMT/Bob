@@ -18,10 +18,7 @@ public class Shutdown extends Thread {
         // flush then close the log channels
         try {
             for (LoggerChannel channel : LoggerChannel.values()) {
-                FileWriter writer = channel.getWriter();
-
-                writer.flush();
-                writer.close();
+                channel.close();
             }
         } catch (IOException e) {
             e.printStackTrace();

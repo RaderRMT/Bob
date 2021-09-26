@@ -60,6 +60,10 @@ public class Logger {
     }
 
     public static void printStackTrace(LoggerChannel channel, Exception exception) {
+        if (channel.isClosed()) {
+            return;
+        }
+
         PrintWriter channelPrintWriter = new PrintWriter(channel.getWriter());
 
         exception.printStackTrace(channelPrintWriter);
@@ -68,6 +72,10 @@ public class Logger {
     }
 
     private static void write(LoggerChannel channel, String label, String message) {
+        if (channel.isClosed()) {
+            return;
+        }
+
         try {
             FileWriter writer = channel.getWriter();
 
