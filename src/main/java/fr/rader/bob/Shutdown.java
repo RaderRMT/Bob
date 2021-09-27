@@ -2,11 +2,10 @@ package fr.rader.bob;
 
 import fr.rader.bob.logger.Logger;
 import fr.rader.bob.logger.LoggerChannel;
-import fr.rader.bob.utils.FileUtils;
+import fr.rader.bob.utils.DirectoryUtils;
 import fr.rader.bob.zip.ZipWriter;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 public class Shutdown extends Thread {
@@ -38,6 +37,6 @@ public class Shutdown extends Thread {
         }
 
         // delete the current log directory as it's now a zip
-        FileUtils.deleteDirectory(Logger.CURRENT_LOG);
+        DirectoryUtils.deleteDirectory(Logger.CURRENT_LOG);
     }
 }

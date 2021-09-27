@@ -58,34 +58,36 @@ public class ZipWriter {
      * @throws IOException If an I/O error occurs
      */
     public void addFile(File file) throws IOException {
-        // return if the zipFile is null, aka if it wasn't created
-        // why write in a file that doesn't exist?
-        if (zipFile == null) {
-            return;
-        }
-
         // return if the file does not exist,
         // why write a file that doesn't exist?
         if (!file.exists()) {
             return;
         }
 
-        // creating the entry
-        ZipEntry entry = new ZipEntry(file.getName());
-        outputStream.putNextEntry(entry);
+        // adding the entry in the zip
+        addEntry(file.getName(), new FileInputStream(file));
+    }
 
-        // opening the stream to read the file
-        FileInputStream entryInputStream = new FileInputStream(file);
+    public void addEntry(String name, InputStream stream) throws IOException {
+        // return if the zipFile is null, aka if it wasn't created
+        // why write in a file that doesn't exist?
+        if (zipFile == null) {
+            return;
+        }
+
+        // creating the entry
+        ZipEntry entry = new ZipEntry(name);
+        outputStream.putNextEntry(entry);
 
         // writing the file to the zip
         int length;
         byte[] buffer = new byte[BUFFER_SIZE];
-        while ((length = entryInputStream.read(buffer)) > 0) {
+        while ((length = stream.read(buffer)) > 0) {
             outputStream.write(buffer, 0, length);
         }
 
         // closing the steams
-        entryInputStream.close();
+        stream.close();
         outputStream.closeEntry();
     }
 

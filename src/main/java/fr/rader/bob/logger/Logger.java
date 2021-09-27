@@ -65,7 +65,7 @@ public class Logger {
     }
 
     public static void printStackTrace(LoggerChannel channel, Exception exception) {
-        if (channel.isClosed()) {
+        if (channel == null || channel.isClosed()) {
             return;
         }
 
@@ -77,7 +77,7 @@ public class Logger {
     }
 
     private static void write(LoggerChannel channel, String label, String message) {
-        if (channel.isClosed()) {
+        if (channel == null || channel.isClosed()) {
             return;
         }
 

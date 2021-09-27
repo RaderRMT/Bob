@@ -1,6 +1,7 @@
 package fr.rader.bob;
 
 import fr.rader.bob.logger.Logger;
+import fr.rader.bob.utils.DirectoryUtils;
 
 public class Bob {
 
@@ -10,6 +11,8 @@ public class Bob {
     }
 
     void start() {
+        DirectoryUtils.makeDirectory(OS.getBobFolder(), false);
+
         Logger.info("Starting Bob.");
     }
 }
