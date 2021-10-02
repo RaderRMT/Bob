@@ -105,13 +105,13 @@ public enum LoggerChannel {
     }
 
     /**
-     * Getter for the log path.<br><br>
-     *
+     * Getter for the log path.
+     * <p>
      * For this comment, {@code LOG_NAME} will be the date and time at which<br>
-     * Bob has been started, matching the {@link Logger#DATETIME_FILE_PATTERN} pattern<br><br>
-     *
+     * Bob has been started, matching the {@link Logger#DATETIME_FILE_PATTERN} pattern
+     * <p>
      * Windows: {@code %userprofile%/.bob/logs/LOG_NAME/}<br>
-     * MacOS & Linux: {@code ~/.bob/logs/LOG_NAME/}<br>
+     * macOS & Linux: {@code ~/.bob/logs/LOG_NAME/}
      *
      * @return Path to the log
      */

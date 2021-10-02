@@ -9,9 +9,9 @@ public class DirectoryUtils {
     /**
      * Create a file
      *
-     * @param path The path of the directory to create
+     * @param path          The path of the directory to create
      * @param emptyIfExists true if we want to empty the directory if it already exists, false
-     *     otherwise
+     *                      otherwise
      * @return The directory that was created, or null if it cannot be created
      */
     public static File makeDirectory(String path, boolean emptyIfExists) {
@@ -21,9 +21,9 @@ public class DirectoryUtils {
     /**
      * Create a file
      *
-     * @param directory The directory to create
+     * @param directory     The directory to create
      * @param emptyIfExists true if we want to empty the directory if it already exists, false
-     *     otherwise
+     *                      otherwise
      * @return The file that was created, or null if it cannot be created
      */
     public static File makeDirectory(File directory, boolean emptyIfExists) {

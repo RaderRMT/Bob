@@ -58,7 +58,7 @@ public class Logger {
 
     /**
      * The Kraken: The Destroyer of Replays.
-     *
+     * <p>
      * Jokes aside, the Kraken shouldn't really be an issue.
      * This method is still going to be called in some places,
      * like when rewriting packets, or anything related to

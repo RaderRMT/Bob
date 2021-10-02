@@ -71,7 +71,7 @@ public class ZipWriter {
     /**
      * Add a new entry to the zip file
      *
-     * @param name The name of the entry
+     * @param name   The name of the entry
      * @param stream The stream containing the file's data
      * @throws IOException If an I/O error occurs
      */
