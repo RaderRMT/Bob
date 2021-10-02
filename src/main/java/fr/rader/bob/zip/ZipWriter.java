@@ -14,15 +14,15 @@ public class ZipWriter {
     private final File zipFile;                 // this is our zip file
 
     /**
+     * Buffer size for the {@link ZipOutputStream#write(byte[], int, int)} method
+     */
+    private final int BUFFER_SIZE = 8192;
+
+    /**
      * Various OutputStreams to make this work
      */
     private FileOutputStream zipOutputStream;   // this OutputStream is used for the ZipOutputStream
     private ZipOutputStream outputStream;       // this is the OutputStream we're using to write ZIP entries
-
-    /**
-     * Buffer size for the {@link ZipOutputStream#write(byte[], int, int)} method
-     */
-    private final int BUFFER_SIZE = 8192;
 
     /**
      * Allows us to write ZIP files
@@ -68,6 +68,13 @@ public class ZipWriter {
         addEntry(file.getName(), new FileInputStream(file));
     }
 
+    /**
+     * Add a new entry to the zip file
+     *
+     * @param name The name of the entry
+     * @param stream The stream containing the file's data
+     * @throws IOException If an I/O error occurs
+     */
     public void addEntry(String name, InputStream stream) throws IOException {
         // return if the zipFile is null, aka if it wasn't created
         // why write in a file that doesn't exist?

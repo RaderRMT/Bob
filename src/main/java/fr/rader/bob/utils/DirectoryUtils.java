@@ -30,20 +30,19 @@ public class DirectoryUtils {
         Logger.info("Creating directory " + directory.getAbsolutePath());
 
         // deleting the file if it already exists
-        if (emptyIfExists) {
-            if (directory.exists()) {
-                Logger.info(directory.getAbsolutePath() + " already exists, emptying it");
+        // & if the emptyIfExists boolean is true
+        if (emptyIfExists & directory.exists()) {
+            Logger.info(directory.getAbsolutePath() + " already exists, emptying it");
 
-                if (!emptyDirectory(directory)) {
-                    Logger.error("Couldn't empty " + directory.getAbsolutePath());
-                    return null;
-                }
+            if (!emptyDirectory(directory)) {
+                Logger.warn("Couldn't empty " + directory.getAbsolutePath());
+                return null;
             }
         }
 
         // creating the directory
         if (!directory.mkdirs()) {
-            Logger.error("Couldn't create " + directory.getAbsolutePath());
+            Logger.warn("Couldn't create " + directory.getAbsolutePath() + ", it might already exist");
             return null;
         }
 

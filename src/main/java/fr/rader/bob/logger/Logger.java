@@ -56,6 +56,18 @@ public class Logger {
         write(channel, ERROR_LABEL, message);
     }
 
+    /**
+     * The Kraken: The Destroyer of Replays.
+     *
+     * Jokes aside, the Kraken shouldn't really be an issue.
+     * This method is still going to be called in some places,
+     * like when rewriting packets, or anything related to
+     * Replays in general. It's only going to write a sentence
+     * with the {@link Logger#KRAKEN_LABEL} label in the log
+     * so that my moderators know if the issue has a fix or not.
+     * A Kraken might not appear in the logs, but it's effects
+     * could be seen and a fix could be guessed
+     */
     public static void kraken() {
         write(LoggerChannel.DEFAULT, KRAKEN_LABEL, "Kraken happened, please be nice to it :(");
     }
