@@ -1,9 +1,9 @@
 package fr.rader.bob;
 
-import fr.rader.bob.logger.Logger;
-import fr.rader.bob.logger.LoggerChannel;
-import fr.rader.bob.utils.DirectoryUtils;
-import fr.rader.bob.zip.ZipWriter;
+import fr.rader.utils.io.DirectoryUtils;
+import fr.rader.utils.logger.Logger;
+import fr.rader.utils.logger.LoggerChannel;
+import fr.rader.utils.zip.ZipWriter;
 
 import java.io.File;
 import java.io.IOException;

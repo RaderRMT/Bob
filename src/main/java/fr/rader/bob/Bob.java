@@ -1,7 +1,8 @@
 package fr.rader.bob;
 
-import fr.rader.bob.logger.Logger;
-import fr.rader.bob.utils.DirectoryUtils;
+import fr.rader.utils.OS;
+import fr.rader.utils.logger.Logger;
+import fr.rader.utils.io.DirectoryUtils;
 
 public class Bob {
 
@@ -11,6 +12,7 @@ public class Bob {
     }
 
     void start() {
+        // this shouldn't be needed but why not keep it?
         DirectoryUtils.makeDirectory(OS.getBobFolder(), false);
 
         Logger.info("Starting Bob.");

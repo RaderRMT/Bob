@@ -1,36 +1,31 @@
-package fr.rader.bob.logger;
+package fr.rader.utils.logger;
 
-import fr.rader.bob.OS;
-import fr.rader.bob.utils.DateUtils;
+import fr.rader.utils.OS;
+import fr.rader.utils.DateUtils;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
 public class Logger {
 
-    /**
-     * DateTime patterns
-     */
+    /** DateTime patterns */
     private static final String DATETIME_LOG_PATTERN = "[yyyy-MM-dd] [HH:mm:ss]";
+
     private static final String DATETIME_FILE_PATTERN = "yyyy-MM-dd_HH-mm-ss";
 
-    /**
-     * Log Labels
-     */
+    /** Log Labels */
     private static final String INFO_LABEL = "[INFO]";
+
     private static final String WARN_LABEL = "[WARN]";
     private static final String ERROR_LABEL = "[ERROR]";
     private static final String KRAKEN_LABEL = "[KRAKEN]";
 
-    /**
-     * Path to the main logs folder
-     */
+    /** Path to the main logs folder */
     public static final String LOG_PATH = OS.getBobFolder() + "logs/";
 
-    /**
-     * Path to the current log
-     */
-    public static final String CURRENT_LOG = LOG_PATH + DateUtils.getFormattedDate(DATETIME_FILE_PATTERN);
+    /** Path to the current log */
+    public static final String CURRENT_LOG =
+            LOG_PATH + DateUtils.getFormattedDate(DATETIME_FILE_PATTERN);
 
     public static void info(String message) {
         info(LoggerChannel.DEFAULT, message);
@@ -58,15 +53,12 @@ public class Logger {
 
     /**
      * The Kraken: The Destroyer of Replays.
-     * <p>
-     * Jokes aside, the Kraken shouldn't really be an issue.
-     * This method is still going to be called in some places,
-     * like when rewriting packets, or anything related to
-     * Replays in general. It's only going to write a sentence
-     * with the {@link Logger#KRAKEN_LABEL} label in the log
-     * so that my moderators know if the issue has a fix or not.
-     * A Kraken might not appear in the logs, but it's effects
-     * could be seen and a fix could be guessed
+     *
+     * <p>Jokes aside, the Kraken shouldn't really be an issue. This method is still going to be
+     * called in some places, like when rewriting packets, or anything related to Replays in
+     * general. It's only going to write a sentence with the {@link Logger#KRAKEN_LABEL} label in
+     * the log so that my moderators know if the issue has a fix or not. A Kraken might not appear
+     * in the logs, but it's effects could be seen and a fix could be guessed
      */
     public static void kraken() {
         write(LoggerChannel.DEFAULT, KRAKEN_LABEL, "Kraken happened, please be nice to it :(");
@@ -85,7 +77,7 @@ public class Logger {
 
         exception.printStackTrace(channelPrintWriter);
 
-        channelPrintWriter.close();
+        channelPrintWriter.flush();
     }
 
     private static void write(LoggerChannel channel, String label, String message) {

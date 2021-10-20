@@ -1,6 +1,6 @@
-package fr.rader.bob.utils;
+package fr.rader.utils.io;
 
-import fr.rader.bob.logger.Logger;
+import fr.rader.utils.logger.Logger;
 
 import java.io.File;
 
@@ -9,9 +9,9 @@ public class DirectoryUtils {
     /**
      * Create a file
      *
-     * @param path          The path of the directory to create
+     * @param path The path of the directory to create
      * @param emptyIfExists true if we want to empty the directory if it already exists, false
-     *                      otherwise
+     *     otherwise
      * @return The directory that was created, or null if it cannot be created
      */
     public static File makeDirectory(String path, boolean emptyIfExists) {
@@ -21,9 +21,9 @@ public class DirectoryUtils {
     /**
      * Create a file
      *
-     * @param directory     The directory to create
+     * @param directory The directory to create
      * @param emptyIfExists true if we want to empty the directory if it already exists, false
-     *                      otherwise
+     *     otherwise
      * @return The file that was created, or null if it cannot be created
      */
     public static File makeDirectory(File directory, boolean emptyIfExists) {
@@ -31,18 +31,26 @@ public class DirectoryUtils {
 
         // deleting the file if it already exists
         // & if the emptyIfExists boolean is true
-        if (emptyIfExists & directory.exists()) {
-            Logger.info(directory.getAbsolutePath() + " already exists, emptying it");
+        // it'll return the directory if it already exists
+        // & if the emptyIfExists boolean is false
+        if (directory.exists()) {
+            if (emptyIfExists) {
+                Logger.info(directory.getAbsolutePath() + " already exists, emptying it");
 
-            if (!emptyDirectory(directory)) {
-                Logger.warn("Couldn't empty " + directory.getAbsolutePath());
-                return null;
+                if (!emptyDirectory(directory)) {
+                    Logger.warn("Couldn't empty " + directory.getAbsolutePath());
+                    return null;
+                }
+            } else {
+                Logger.info(directory.getAbsolutePath() + " already exists");
+                return directory;
             }
         }
 
         // creating the directory
         if (!directory.mkdirs()) {
-            Logger.warn("Couldn't create " + directory.getAbsolutePath() + ", it might already exist");
+            Logger.warn(
+                    "Couldn't create " + directory.getAbsolutePath() + ", it might already exist");
             return null;
         }
 

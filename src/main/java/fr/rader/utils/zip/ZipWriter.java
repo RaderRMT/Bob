@@ -1,6 +1,6 @@
-package fr.rader.bob.zip;
+package fr.rader.utils.zip;
 
-import fr.rader.bob.utils.FileUtils;
+import fr.rader.utils.io.FileUtils;
 
 import java.io.*;
 import java.util.zip.ZipEntry;
@@ -8,21 +8,17 @@ import java.util.zip.ZipOutputStream;
 
 public class ZipWriter {
 
-    /**
-     * The ZIP file we're creating
-     */
-    private final File zipFile;                 // this is our zip file
+    /** The ZIP file we're creating */
+    private final File zipFile; // this is our zip file
 
-    /**
-     * Buffer size for the {@link ZipOutputStream#write(byte[], int, int)} method
-     */
+    /** Buffer size for the {@link ZipOutputStream#write(byte[], int, int)} method */
     private final int BUFFER_SIZE = 8192;
 
-    /**
-     * Various OutputStreams to make this work
-     */
-    private FileOutputStream zipOutputStream;   // this OutputStream is used for the ZipOutputStream
-    private ZipOutputStream outputStream;       // this is the OutputStream we're using to write ZIP entries
+    /** Various OutputStreams to make this work */
+    private FileOutputStream zipOutputStream; // this OutputStream is used for the ZipOutputStream
+
+    private ZipOutputStream
+            outputStream; // this is the OutputStream we're using to write ZIP entries
 
     /**
      * Allows us to write ZIP files
@@ -71,7 +67,7 @@ public class ZipWriter {
     /**
      * Add a new entry to the zip file
      *
-     * @param name   The name of the entry
+     * @param name The name of the entry
      * @param stream The stream containing the file's data
      * @throws IOException If an I/O error occurs
      */

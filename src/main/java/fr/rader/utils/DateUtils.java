@@ -1,4 +1,4 @@
-package fr.rader.bob.utils;
+package fr.rader.utils;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;

@@ -1,6 +1,6 @@
-package fr.rader.bob.zip;
+package fr.rader.utils.zip;
 
-import fr.rader.bob.logger.Logger;
+import fr.rader.utils.logger.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,14 +10,10 @@ import java.util.zip.ZipFile;
 
 public class ZipReader {
 
-    /**
-     * The ZIP file we're reading
-     */
-    private final File file;        // this is our zip file
+    /** The ZIP file we're reading */
+    private final File file; // this is our zip file
 
-    /**
-     * This is required to read entries in the ZIP file
-     */
+    /** This is required to read entries in the ZIP file */
     private ZipFile zipFile = null;
 
     /**
@@ -53,7 +49,7 @@ public class ZipReader {
      *
      * @param entry Entry to look for
      * @return {@code true} if the ZIP file contains the provided {@code entry},<br>
-     * {@code false} otherwise
+     *     {@code false} otherwise
      */
     public boolean hasEntry(String entry) {
         if (zipFile == null) {

@@ -1,0 +1,27 @@
+packet 70 {
+    int "test";
+    byte["test"] "test array";
+
+    array("test", "test normal array") {
+        byte "value 1";
+        byte "value 2";
+    }
+
+    if %testing% == 7 {
+        byte "hello";
+    }
+
+    match "test" {
+        0 => {
+            byte "match 0 byte";
+        }
+
+        1 => {
+            byte "match 1 byte";
+        }
+    }
+
+    if "test" < 5 {
+        byte "if byte";
+    }
+}

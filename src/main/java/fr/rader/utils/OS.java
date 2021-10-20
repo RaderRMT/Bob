@@ -1,4 +1,4 @@
-package fr.rader.bob;
+package fr.rader.utils;
 
 public class OS {
 
@@ -30,12 +30,11 @@ public class OS {
 
         if (osName.startsWith("Windows")) {
             PLATFORM = WINDOWS;
-        } else if (!osName.startsWith("Linux") &&
-                !osName.startsWith("FreeBSD") &&
-                !osName.startsWith("SunOS") &&
-                !osName.startsWith("Unix")) {
-            if (!osName.startsWith("Mac OS X") &&
-                    !osName.startsWith("Darwin")) {
+        } else if (!osName.startsWith("Linux")
+                && !osName.startsWith("FreeBSD")
+                && !osName.startsWith("SunOS")
+                && !osName.startsWith("Unix")) {
+            if (!osName.startsWith("Mac OS X") && !osName.startsWith("Darwin")) {
                 throw new IllegalStateException("Unknown platform: " + osName);
             }
 

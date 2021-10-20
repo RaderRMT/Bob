@@ -1,6 +1,6 @@
-package fr.rader.bob.utils;
+package fr.rader.utils.io;
 
-import fr.rader.bob.logger.Logger;
+import fr.rader.utils.logger.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ public class FileUtils {
     /**
      * Create a file
      *
-     * @param path      The path of the file to create
+     * @param path The path of the file to create
      * @param overwrite true if we want to overwrite the file, false otherwise
      * @return The file that was created, or null if it cannot be created
      * @throws IOException If an I/O error occurs
@@ -22,7 +22,7 @@ public class FileUtils {
     /**
      * Create a file
      *
-     * @param file      The file to create
+     * @param file The file to create
      * @param overwrite true if we want to overwrite the file, false otherwise
      * @return The file that was created, or null if it cannot be created
      * @throws IOException If an I/O error occurs
