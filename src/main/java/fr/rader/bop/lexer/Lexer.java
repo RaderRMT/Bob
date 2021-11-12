@@ -1,31 +1,37 @@
 package fr.rader.bop.lexer;
 
 import fr.rader.bop.tokens.Token;
+import fr.rader.bop.tokens.TokenList;
 import fr.rader.bop.tokens.TokenType;
 import fr.rader.utils.logger.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static fr.rader.bop.tokens.TokenType.*;
 
 public class Lexer {
 
+    /** The PSL file source */
     private final SourceStream source;
 
-    private final List<Token> tokens;
+    /** The list of tokens */
+    private final TokenList tokens;
 
+    /** Line counter for error messages */
     private int line = 1;
+
+    /** Used to check some errors that are only visible
+     * when lexing the PSL file */
+    private boolean hasErrors = false;
 
     public Lexer(File file) throws IOException {
         this.source = new SourceStream(file);
-        this.tokens = new ArrayList<>();
+        this.tokens = new TokenList();
     }
 
-    public List<Token> scanTokens() throws IOException {
-        while (source.hasNext()) {
+    public TokenList scanTokens() throws IOException {
+        while (source.hasNext() && !hasErrors) {
             scanToken();
         }
 
@@ -37,19 +43,19 @@ public class Lexer {
         char c = source.next();
 
         switch (c) {
-                // skip spaces, tabs and carriage returns
+            // skip spaces, tabs and carriage returns
             case ' ':
             case '\r':
             case '\t':
                 break;
 
-                // count lines
+            // count lines
             case '\n':
                 line++;
                 break;
 
-                // checking for parenthesis, curly and square brackets
-                // and adding them as tokens in the token list
+            // checking for parenthesis, curly and square brackets
+            // and adding them as tokens in the token list
             case '(':
                 addToken(OPEN_PAREN);
                 break;
@@ -69,7 +75,7 @@ public class Lexer {
                 addToken(CLOSE_SQUARE_BRACKET);
                 break;
 
-                // same for commas and semicolons
+            // same for commas and semicolons
             case ',':
                 addToken(COMMA);
                 break;
@@ -78,7 +84,13 @@ public class Lexer {
                 break;
 
             case '!':
-                addToken(nextCharIs('=') ? BANG_EQUAL : BANG);
+                // only check for '!='
+                if (nextCharIs('=')) {
+                    addToken(BANG_EQUAL);
+                } else {
+                    hasErrors = true;
+                    Logger.error("Unexpected '!' at line " + line + ", maybe try with '!=' instead.");
+                }
                 break;
 
             case '=':
@@ -87,10 +99,9 @@ public class Lexer {
                 } else if (nextCharIs('>')) {
                     addToken(MATCH_ARROW);
                 } else {
-                    Logger.error(
-                            "Missing character on line "
-                                    + line
-                                    + ": '=' must be followed by either '=' or '>'.");
+                    hasErrors = true;
+                    Logger.error("Missing character on line " +
+                            line + ": '=' must be followed by either '=' or '>'.");
                 }
                 break;
 
@@ -101,11 +112,11 @@ public class Lexer {
                 addToken(nextCharIs('=') ? GREATER_EQUAL : GREATER);
                 break;
 
-                // removing the comments.
-                // comments are either:
-                //      - one line comments (using // at the start of the comment)
-                //      - multiple lines comments (using /* at the start and */ at the end of the
-                // comment)
+            // removing the comments.
+            // comments are either:
+            //      - one line comments (using // at the start of the comment)
+            //      - multiple lines comments (using /* at the start and */ at the end of the
+            //              comment)
             case '/':
                 if (nextCharIs('/')) {
                     // as this is a single line comment, we can read
@@ -121,17 +132,19 @@ public class Lexer {
                         if (nextCharIs('*') && nextCharIs('/')) {
                             // we don't have to do anything here because nextCharIs will
                             // consume the character if it's the same as the one passed as the
-                            // argument
-                            // so we just break out of the while loop
+                            // argument, so we just break out of the while loop
                             break;
                         }
 
                         source.skip();
                     }
+                } else {
+                    hasErrors = true;
+                    Logger.error("Unexpected '/' at line " + line + ", maybe try with either '//' or '/*'.");
                 }
                 break;
 
-                // variable names
+            // variable names
             case '"':
                 name();
                 break;
@@ -142,32 +155,44 @@ public class Lexer {
                 } else if (isDigit(c)) {
                     number();
                 } else {
-                    Logger.error("Unexpected character on line " + line + ": '" + c + "'");
+                    hasErrors = true;
+                    Logger.error("Unexpected character at line " + line + ": '" + c + "'");
                 }
+                break;
         }
     }
 
     /**
-     * Reads an number from the source file
+     * Reads a number from the source file
+     *
      * @throws IOException if an I/O error occurs.
      */
     private void number() throws IOException {
         String number = String.valueOf(source.peek(SourceStream.CURRENT));
-        while (source.hasNext() && isDigit(source.peek(SourceStream.NEXT))) {
-            number += source.next();
+        while (source.hasNext()) {
+            if (isDigit(source.peek(SourceStream.NEXT))) {
+                number += source.next();
+            } else {
+                break;
+            }
         }
 
         addToken(NUMBER, Integer.parseInt(number));
     }
 
     /**
-     * Reads an name from the source file
+     * Reads a name from the source file
+     *
      * @throws IOException if an I/O error occurs.
      */
     private void name() throws IOException {
         String name = "";
-        while (source.hasNext() && source.peek(SourceStream.NEXT) != '"') {
-            name += source.next();
+        while (source.hasNext()) {
+            if (source.peek(SourceStream.NEXT) != '"') {
+                name += source.next();
+            } else {
+                break;
+            }
         }
 
         // consume the closing double quote
@@ -178,17 +203,24 @@ public class Lexer {
 
     /**
      * Reads an identifier from the source file
+     *
      * @throws IOException if an I/O error occurs.
      */
     private void identifier() throws IOException {
         String identifier = String.valueOf(source.peek(SourceStream.CURRENT));
-        while (source.hasNext() && isAlpha(source.peek(SourceStream.NEXT))) {
-            identifier += source.next();
+        while (source.hasNext()) {
+            if (isAlpha(source.peek(SourceStream.NEXT))) {
+                identifier += source.next();
+            } else {
+                break;
+            }
         }
 
         TokenType type = Keywords.get(identifier);
         if (type == null) {
-            type = IDENTIFIER;
+            hasErrors = true;
+            Logger.error("Unknown keyword at line " + line + ": " + identifier);
+            return;
         }
 
         addToken(type);
@@ -200,7 +232,7 @@ public class Lexer {
      *
      * @param c the character to check
      * @return true if it's a number<br>
-     *     false otherwise
+     * false otherwise
      */
     private boolean isAlpha(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
@@ -212,7 +244,7 @@ public class Lexer {
      *
      * @param c the character to check
      * @return true if it's a number<br>
-     *     false otherwise
+     * false otherwise
      */
     private boolean isDigit(char c) {
         return c >= '0' && c <= '9';
@@ -223,7 +255,7 @@ public class Lexer {
      *
      * @param nextCharacter character to look for
      * @return true if both characters match<br>
-     *     false otherwise
+     * false otherwise
      * @throws IOException if an I/O error occurs.
      */
     private boolean nextCharIs(char nextCharacter) throws IOException {
@@ -232,7 +264,6 @@ public class Lexer {
         }
 
         source.skip();
-
         return true;
     }
 
@@ -249,9 +280,18 @@ public class Lexer {
      * Create and add a new token to {@link Lexer#tokens}
      *
      * @param tokenType the type of the token to add
-     * @param value the value of the token
+     * @param value     the value of the token
      */
     private void addToken(TokenType tokenType, Object value) {
         this.tokens.add(new Token(tokenType, value));
+    }
+
+    /**
+     * Get the state of the PSL file.
+     *
+     * @return true if the file contains an error, false otherwise.
+     */
+    public boolean hasErrors() {
+        return hasErrors;
     }
 }

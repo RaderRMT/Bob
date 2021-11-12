@@ -7,8 +7,8 @@ import java.io.IOException;
 public class SourceStream extends FileInputStream {
 
     // data[0] -> previous character
-    // data[0] -> current character
-    // data[0] -> next character
+    // data[1] -> current character
+    // data[2] -> next character
     private final char[] data = new char[3];
 
     // the size of our source file
@@ -51,6 +51,11 @@ public class SourceStream extends FileInputStream {
         return peek(CURRENT);
     }
 
+    /**
+     * Skip the current character
+     *
+     * @throws IOException if an I/O error occurs.
+     */
     public void skip() throws IOException {
         shiftData();
     }

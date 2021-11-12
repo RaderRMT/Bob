@@ -21,4 +21,12 @@ public class Token {
     public Object getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "Token{" +
+                "type=" + type +
+                ", value=" + value +
+                '}';
+    }
 }
