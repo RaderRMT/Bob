@@ -1,4 +1,6 @@
-package fr.rader.bop.lexer;
+package fr.rader.utils.io;
+
+import fr.rader.utils.logger.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,10 +8,13 @@ import java.io.IOException;
 
 public class SourceStream extends FileInputStream {
 
+    // buffer size for out data array
+    private static final byte BUFFER_SIZE = 3;
+
     // data[0] -> previous character
     // data[1] -> current character
     // data[2] -> next character
-    private final char[] data = new char[3];
+    private final char[] data = new char[BUFFER_SIZE];
 
     // the size of our source file
     private final long sourceSize;
@@ -116,5 +121,11 @@ public class SourceStream extends FileInputStream {
         int value = read();
 
         return (value == -1) ? 0 : (char) value;
+    }
+
+    public void printBuffer() {
+        Logger.info("PREVIOUS: " + peek(PREVIOUS));
+        Logger.info("CURRENT: " + peek(CURRENT));
+        Logger.info("NEXT: " + peek(NEXT));
     }
 }

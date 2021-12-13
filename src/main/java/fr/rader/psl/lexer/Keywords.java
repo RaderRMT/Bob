@@ -1,26 +1,19 @@
-package fr.rader.bop.lexer;
+package fr.rader.psl.lexer;
 
-import fr.rader.bop.tokens.TokenType;
+import fr.rader.psl.tokens.TokenType;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static fr.rader.bop.tokens.TokenType.*;
+import static fr.rader.psl.tokens.TokenType.*;
 
 public class Keywords {
 
+    // a map containing the keyword and it's associated token
     private static final Map<String, TokenType> keywords = new HashMap<>();
 
-    public static boolean contains(String keyword) {
-        return keywords.containsKey(keyword);
-    }
-
     public static TokenType get(String keyword) {
-        if (contains(keyword)) {
-            return keywords.get(keyword);
-        }
-
-        return null;
+        return keywords.get(keyword);
     }
 
     static {

@@ -1,5 +1,7 @@
 package fr.rader.utils;
 
+import java.io.File;
+
 public class OS {
 
     private static final int PLATFORM;
@@ -9,7 +11,11 @@ public class OS {
     private static final int WINDOWS = 3;
 
     public static String getBobFolder() {
-        return System.getProperty("user.home") + "/.bob/";
+        return System.getProperty("user.home").replace("\\", "/") + "/.bob/";
+    }
+
+    public static File getPSL(int protocol, int packetID) {
+        return new File(getBobFolder() + "assets/protocols/" + protocol + "/" + packetID + ".psl");
     }
 
     public static String getOS() {

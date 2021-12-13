@@ -1,11 +1,11 @@
-package fr.rader.bop.validator;
+package fr.rader.psl.validator;
 
-import fr.rader.bop.tokens.Token;
-import fr.rader.bop.tokens.TokenList;
-import fr.rader.bop.tokens.TokenType;
+import fr.rader.psl.tokens.Token;
+import fr.rader.psl.tokens.TokenList;
+import fr.rader.psl.tokens.TokenType;
 import fr.rader.utils.logger.Logger;
 
-import static fr.rader.bop.tokens.TokenType.*;
+import static fr.rader.psl.tokens.TokenType.*;
 
 public class Validator {
 
@@ -69,6 +69,7 @@ public class Validator {
             // conditions
             if (type.equals(IF)) {
                 expect(NAME);
+                // todo: check if variable is a boolean
                 isSourceValid &= tokens.get().getType().isComparator();
                 expect(NUMBER, OPEN_CURLY_BRACKET);
 
@@ -116,7 +117,7 @@ public class Validator {
             Token token = tokens.get();
 
             if (!type.equals(token.getType())) {
-                Logger.warn("Expected " + type.name() + ", got " + token.getType().name() + " instead.");
+                Logger.warn("Expected " + type.name() + ", got " + token.getType().name() + " instead. Line: " + token.getLine());
                 isSourceValid = false;
                 return;
             }

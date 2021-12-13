@@ -1,4 +1,4 @@
-package fr.rader.bop.tokens;
+package fr.rader.psl.tokens;
 
 import java.util.ArrayList;
 import java.util.List;

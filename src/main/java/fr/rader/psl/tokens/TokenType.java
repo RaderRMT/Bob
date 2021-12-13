@@ -1,4 +1,4 @@
-package fr.rader.bop.tokens;
+package fr.rader.psl.tokens;
 
 public enum TokenType {
 

@@ -1,17 +1,19 @@
-package fr.rader.bop.tokens;
+package fr.rader.psl.tokens;
 
 public class Token {
 
     private final TokenType type;
     private final Object value;
+    private final int line;
 
-    public Token(TokenType type) {
-        this(type, null);
+    public Token(TokenType type, int line) {
+        this(type, null, line);
     }
 
-    public Token(TokenType type, Object value) {
+    public Token(TokenType type, Object value, int line) {
         this.type = type;
         this.value = value;
+        this.line = line;
     }
 
     public TokenType getType() {
@@ -20,6 +22,10 @@ public class Token {
 
     public Object getValue() {
         return value;
+    }
+
+    public int getLine() {
+        return line;
     }
 
     @Override

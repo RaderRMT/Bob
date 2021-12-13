@@ -95,6 +95,9 @@ public class Logger {
             writer.append(message);
             writer.append('\n');
 
+            // todo: remove this once finished
+            System.out.println(DateUtils.getFormattedDate(DATETIME_LOG_PATTERN) + " " + label + " " + message);
+
             writer.flush();
         } catch (Exception e) {
             e.printStackTrace();
