@@ -5,11 +5,10 @@ import fr.rader.utils.StringUtils;
 import fr.rader.utils.logger.Logger;
 
 import java.io.File;
-import java.io.IOException;
 
 public class ErrorPrinter {
 
-    public static void printError(File file, int lineIndex, int start, int size, String errorID, String message, String solution) throws IOException {
+    public static void printError(File file, int lineIndex, int start, int size, String errorID, String message, String solution) {
         // print the error
         print(file, lineIndex, start, size, errorID, message);
 
@@ -19,9 +18,15 @@ public class ErrorPrinter {
         }
     }
 
-    private static void print(File file, int lineIndex, int start, int size, String errorID, String message) throws IOException {
-        // get the line and leading spaces
+    private static void print(File file, int lineIndex, int start, int size, String errorID, String message) {
+        // get the line at the given index in the file
         String line = LineReader.getLine(file, lineIndex);
+        // return if the line is null
+        if (line == null) {
+            return;
+        }
+
+        // count the number of leading spaces
         int leadingSpaces = StringUtils.leadingSpaces(line);
 
         // remove the leading spaces from the start index

@@ -122,10 +122,10 @@ public class Lexer {
 
             // check for <, <=, > and >=
             case '<':
-                addToken(nextCharIs('=') ? LESS_EQUAL : LESS);
+                addToken(nextCharIs('=') ? LESS_EQUAL_SIGN : LESS_SIGN);
                 break;
             case '>':
-                addToken(nextCharIs('=') ? GREATER_EQUAL : GREATER);
+                addToken(nextCharIs('=') ? GREATER_EQUAL_SIGN : GREATER_SIGN);
                 break;
 
             // check for bang equal
@@ -134,7 +134,7 @@ public class Lexer {
                 if (nextCharIs('=')) {
                     // if it is, we add the bang equal to the tokens list.
                     // nextCharIs() will consume the equal sign
-                    addToken(BANG_EQUAL);
+                    addToken(BANG_EQUAL_SIGN);
                 } else {
                     // if it isn't, we print an error
                     ErrorPrinter.printError(
@@ -162,7 +162,7 @@ public class Lexer {
                 // to form an equal_equal token
                 if (nextCharIs('=')) {
                     // if it is, we add the equal_equal token in the tokens list
-                    addToken(EQUAL_EQUAL);
+                    addToken(EQUAL_EQUAL_SIGN);
                 } else if (nextCharIs('>')) {
                     // check if the next char is a greater sign
                     // to form an equal_equal token
@@ -294,7 +294,7 @@ public class Lexer {
                                 characterPositionInLine,
                                 1,
                                 "A05",
-                                "Missing space after identifier",
+                                "Expected space after identifier",
                                 "Add a space at the end of the identifier"
                         );
 
@@ -305,6 +305,8 @@ public class Lexer {
                         return;
                     }
                 } else if (CharacterUtils.isDigit(c)) {
+                    // if the character is a digit,
+                    // we read the number from the source
                     readNumber();
                 } else {
                     // if the character isn't a lowercase letter or a digit,
@@ -483,8 +485,11 @@ public class Lexer {
                     name.length(),
                     "A06",
                     "Names must be in snake_case",
-                    "Change all uppercase letters to lowercase, and use underscores for spaces"
+                    "Change all uppercase letters to lowercase"
             );
+
+            ErrorPrinter.printSolution("Use underscores for spaces");
+            ErrorPrinter.printSolution("Make sure the name does not contain numbers");
 
             // we then tell the lexer that an error occurred
             hasError = true;

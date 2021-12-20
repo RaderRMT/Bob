@@ -50,7 +50,7 @@ public class TokenList {
      * @return the next token or null if out of bound
      */
     public Token peek() {
-        if (index == tokens.size()) {
+        if (index >= tokens.size()) {
             return null;
         }
 

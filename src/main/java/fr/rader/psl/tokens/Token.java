@@ -4,10 +4,13 @@ public class Token {
 
     private final TokenType type;
     private final Object value;
+
     private final int line;
 
     public Token(TokenType type, int line) {
-        this(type, null, line);
+        this.value = null;
+        this.type = type;
+        this.line = line;
     }
 
     public Token(TokenType type, Object value, int line) {

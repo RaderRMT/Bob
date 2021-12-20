@@ -1,63 +1,62 @@
 package fr.rader.psl.tokens;
 
+import static fr.rader.psl.tokens.TokenKind.*;
+
 public enum TokenType {
 
-    OPEN_PAREN(0),              // '('
-    CLOSE_PAREN(0),             // ')'
-    OPEN_CURLY_BRACKET(0),      // '{'
-    CLOSE_CURLY_BRACKET(0),     // '}'
-    OPEN_SQUARE_BRACKET(0),     // '['
-    CLOSE_SQUARE_BRACKET(0),    // ']'
+    OPEN_PAREN              (KIND_NONE),                // '('
+    CLOSE_PAREN             (KIND_NONE),                // ')'
+    OPEN_CURLY_BRACKET      (KIND_NONE),                // '{'
+    CLOSE_CURLY_BRACKET     (KIND_NONE),                // '}'
+    OPEN_SQUARE_BRACKET     (KIND_NONE),                // '['
+    CLOSE_SQUARE_BRACKET    (KIND_NONE),                // ']'
 
-    COMMA(0),                   // ','
-    SEMICOLON(0),               // ';'
+    COMMA                   (KIND_NONE),                // ','
+    SEMICOLON               (KIND_NONE),                // ';'
 
-    BANG_EQUAL(2),              // '!='
-    EQUAL_EQUAL(2),             // '=='
-    GREATER(2),                 // '>'
-    GREATER_EQUAL(2),           // '>='
-    LESS(2),                    // '<'
-    LESS_EQUAL(2),              // '<='
+    BANG_EQUAL_SIGN         (KIND_COMPARATOR),          // '!='
+    EQUAL_EQUAL_SIGN        (KIND_COMPARATOR),          // '=='
+    GREATER_SIGN            (KIND_COMPARATOR),          // '>'
+    GREATER_EQUAL_SIGN      (KIND_COMPARATOR),          // '>='
+    LESS_SIGN               (KIND_COMPARATOR),          // '<'
+    LESS_EQUAL_SIGN         (KIND_COMPARATOR),          // '<='
 
     // types:
-    BOOLEAN(1),                 // 1 byte
-    BYTE(1),                    // 1 byte
-    SHORT(1),                   // 2 bytes
-    INT(1),                     // 4 bytes
-    LONG(1),                    // 8 bytes
-    STRING(1),                  // Depends on previous data
-    FLOAT(1),                   // 4 bytes
-    DOUBLE(1),                  // 8 bytes
-    VARINT(1),                  // 1 - 5 bytes
-    VARLONG(1),                 // 1 - 10 bytes
+    BOOLEAN                 (KIND_TYPE),                // 1 byte
+    BYTE                    (KIND_TYPE | KIND_NUMBER),  // 1 byte
+    SHORT                   (KIND_TYPE | KIND_NUMBER),  // 2 bytes
+    INT                     (KIND_TYPE | KIND_NUMBER),  // 4 bytes
+    LONG                    (KIND_TYPE | KIND_NUMBER),  // 8 bytes
+    STRING                  (KIND_TYPE),                // Depends on previous data
+    FLOAT                   (KIND_TYPE | KIND_NUMBER),  // 4 bytes
+    DOUBLE                  (KIND_TYPE | KIND_NUMBER),  // 8 bytes
+    VARINT                  (KIND_TYPE | KIND_NUMBER),  // 1 - 5 bytes
+    VARLONG                 (KIND_TYPE | KIND_NUMBER),  // 1 - 10 bytes
 
-    METADATA(1),                // Size depends on previous data
-    CHAT(1),                    // Size depends on previous data
-    IDENTIFIER(1),              // Size depends on previous data
-    NBT(1),                     // Size depends on previous data
-    POSITION(1),                // 8 bytes
-    ANGLE(1),                   // 1 byte
-    UUID(1),                    // 16 bytes
+    METADATA                (KIND_TYPE),                // Size depends on previous data
+    CHAT                    (KIND_TYPE),                // Size depends on previous data
+    IDENTIFIER              (KIND_TYPE),                // Size depends on previous data
+    NBT                     (KIND_TYPE),                // Size depends on previous data
+    POSITION                (KIND_TYPE),                // 8 bytes
+    ANGLE                   (KIND_TYPE | KIND_NUMBER),  // 1 byte
+    UUID                    (KIND_TYPE),                // 16 bytes
 
-    ARRAY(0),                   // Size depends on previous data
+    ARRAY                   (KIND_NONE),                // Size depends on previous data
 
-    NUMBER(0),
+    NUMBER                  (KIND_NONE),
 
-    PACKET(0),                  // used to start a new packet, e.g. `packet "packet_name" { ... }`
-    NAME(0),                    // name of the "variable" we're going to read , e.g. `int "test";`
-                                //   (here, NAME would be "test")
+    PACKET                  (KIND_NONE),                // used to start a new packet, e.g. `packet "packet_name" { ... }`
+    NAME                    (KIND_NONE),                // name of the "variable" we're going to read , e.g. `int "test";`
+                                                        //   (here, NAME would be "test")
 
-    MATCH(0),
-    MATCH_ARROW(0),             // =>
+    MATCH                   (KIND_NONE),
+    MATCH_ARROW             (KIND_NONE),                // =>
 
-    IF(0),
-    FALSE(0),
-    TRUE(0),
+    IF                      (KIND_NONE),
+    FALSE                   (KIND_NONE),
+    TRUE                    (KIND_NONE),
 
-    EOF(0);
-
-    private static final byte TYPE = 1;
-    private static final byte COMPARATOR = 2;
+    EOF                     (KIND_NONE);
 
     private final int tokenType;
 
@@ -65,11 +64,19 @@ public enum TokenType {
         this.tokenType = tokenType;
     }
 
+    public String getFriendlyName() {
+        return this.name().toLowerCase().replace('_', ' ');
+    }
+
     public boolean isType() {
-        return this.tokenType == TYPE;
+        return (this.tokenType & KIND_TYPE) != 0;
+    }
+
+    public boolean isNumber() {
+        return (this.tokenType & KIND_NUMBER) != 0;
     }
 
     public boolean isComparator() {
-        return this.tokenType == COMPARATOR;
+        return (this.tokenType & KIND_COMPARATOR) != 0;
     }
 }

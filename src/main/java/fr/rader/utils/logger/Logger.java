@@ -24,8 +24,7 @@ public class Logger {
     public static final String LOG_PATH = OS.getBobFolder() + "logs/";
 
     /** Path to the current log */
-    public static final String CURRENT_LOG =
-            LOG_PATH + DateUtils.getFormattedDate(DATETIME_FILE_PATTERN);
+    public static final String CURRENT_LOG = LOG_PATH + DateUtils.getFormattedDate(DATETIME_FILE_PATTERN);
 
     public static void info(String message) {
         info(LoggerChannel.DEFAULT, message);
