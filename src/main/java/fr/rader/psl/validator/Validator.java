@@ -73,41 +73,62 @@ public class Validator {
     }
 
     private void validateBlock() {
+        // we loop through the code until the source
+        // isn't valid, or if we found the corresponding }
         while (isSourceValid) {
+            // we get the token to check
             Token token = tokens.get();
+            // we get the token type
             TokenType type = token.getType();
 
+            // we leave the method if we find a }
             if (type.equals(CLOSE_CURLY_BRACKET)) {
                 break;
             }
 
+            // we get the token's line,
+            // as everything has to be on
+            // the same line
             int line = token.getLine();
 
-            // check for variable
+            // check if the token is a type
             if (type.isType()) {
+                // if it is, we validate the variable
                 validateVariable(line, type);
 
+                // and we continue
                 continue;
             }
 
+            // we check if the token is an array
             if (type.equals(ARRAY)) {
+                // if it is, we validate the array
                 validateArray(line);
 
+                // and we continue
                 continue;
             }
 
+            // we check if the token is an if
             if (type.equals(IF)) {
+                // if it is, we validate the condition
                 validateCondition(line);
 
+                // and we continue
                 continue;
             }
 
+            // we check if the token is a match
             if (type.equals(MATCH)) {
+                // if it is, we validate the match
                 validateMatch(line);
 
+                // and we continue
                 continue;
             }
 
+            // if the token we're reading isn't expected,
+            // we throw an error
             ErrorPrinter.printError(
                     source,
                     line,
@@ -118,6 +139,7 @@ public class Validator {
                     "Remove the \"" + type.getFriendlyName() + "\" and try again"
             );
 
+            // then we tell the validator that the source isn't valid
             isSourceValid = false;
         }
     }
