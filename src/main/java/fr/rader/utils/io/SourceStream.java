@@ -27,13 +27,11 @@ public class SourceStream extends FileInputStream {
     public static final int NEXT = 2;
 
     /**
-     * The {@code SourceStream} class extends {@link FileInputStream} and add a few useful methods,
-     * such as {@link SourceStream#next() and {@link SourceStream#peek()}
+     * The {@code SourceStream} class extends {@link FileInputStream} and adds a few useful methods,
+     * such as {@link SourceStream#next()} and {@link SourceStream#peek(int)}
      *
      * @param file source file to read
      * @throws IOException if an I/O error occurs
-     * @throws FileNotFoundException if the file does not exist, is a directory rather than a
-     *     regular file, or for some other reason cannot be opened for reading.
      */
     public SourceStream(File file) throws IOException {
         super(file);
@@ -45,6 +43,7 @@ public class SourceStream extends FileInputStream {
 
     /**
      * Reads the current character and calls the {@link SourceStream#shiftData()} method
+     * to read a new character from the stream.
      *
      * @return the character read from the source file<br>
      *     0 if the end of the file has been reached
@@ -70,7 +69,7 @@ public class SourceStream extends FileInputStream {
     }
 
     /**
-     * Look at the {@code index} character in the array, without calling the {@link
+     * Look at the next character in the array (the {@code data} array at index 2 ({@link SourceStream#NEXT})), without calling the {@link
      * SourceStream#shiftData()} method.
      *
      * @param index must be [0; 2]

@@ -242,6 +242,7 @@ public class Validator {
         // check for name
         // check for )
         // check for {
+        // add variable to variables map
         // validate everything until matching }
 
         // we check for a (
@@ -420,7 +421,7 @@ public class Validator {
         // check for {
         // validate everything until matching }
         // validating the match block will have to be done
-        // in a separate method as it's not written
+        // in a different way as it's not written
         // the same way as a normal block
 
         // then we peek the next token. it should be a

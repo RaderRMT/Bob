@@ -65,4 +65,11 @@ public class TokenList {
     public List<Token> getTokens() {
         return tokens;
     }
+
+    /**
+     * Reset the list index
+     */
+    public void reset() {
+        this.index = 0;
+    }
 }
