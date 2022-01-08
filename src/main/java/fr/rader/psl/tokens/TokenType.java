@@ -35,7 +35,6 @@ public enum TokenType {
 
     METADATA                (KIND_TYPE),                // Size depends on previous data
     CHAT                    (KIND_TYPE),                // Size depends on previous data
-    IDENTIFIER              (KIND_TYPE),                // Size depends on previous data
     NBT                     (KIND_TYPE),                // Size depends on previous data
     POSITION                (KIND_TYPE),                // 8 bytes
     ANGLE                   (KIND_TYPE | KIND_NUMBER),  // 1 byte
