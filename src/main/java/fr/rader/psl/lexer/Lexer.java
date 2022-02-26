@@ -1,5 +1,6 @@
 package fr.rader.psl.lexer;
 
+import fr.rader.utils.errors.Error;
 import fr.rader.utils.errors.ErrorPrinter;
 import fr.rader.utils.io.SourceStream;
 import fr.rader.psl.tokens.Token;
@@ -55,10 +56,8 @@ public class Lexer {
         // level isn't at 0
         if (!hasError && braceLevel != 0) {
             // if the brace level isn't at 0, then we print an error
-            ErrorPrinter.printSimpleError(
-                    "A03",
-                    "Invalid brace level at the end of file",
-                    null
+            ErrorPrinter.newPrintError(
+                    Error.A03
             );
 
             // we then tell the lexer that an error occurred
@@ -137,14 +136,12 @@ public class Lexer {
                     addToken(BANG_EQUAL_SIGN);
                 } else {
                     // if it isn't, we print an error
-                    ErrorPrinter.printError(
+                    ErrorPrinter.newPrintError(
                             file,
                             lineCounter,
                             characterPositionInLine,
                             1,
-                            "A08",
-                            "Unexpected bang",
-                            "Try with \"!=\""
+                            Error.A08
                     );
 
                     // we then tell the lexer that an error occurred
@@ -170,14 +167,12 @@ public class Lexer {
                     addToken(MATCH_ARROW);
                 } else {
                     // if it's not a valid character, we print an error
-                    ErrorPrinter.printError(
+                    ErrorPrinter.newPrintError(
                             file,
                             lineCounter,
                             characterPositionInLine,
                             1,
-                            "A09",
-                            "Incomplete equal form",
-                            "Try with \"==\" or \"=>\""
+                            Error.A09
                     );
 
                     // we then tell the lexer that an error occurred
@@ -200,14 +195,12 @@ public class Lexer {
                 // if the brace level is at 0, and we're trying to
                 // reduce it even more, then we throw an error
                 if (braceLevel == 0) {
-                    ErrorPrinter.printError(
+                    ErrorPrinter.newPrintError(
                             file,
                             lineCounter,
                             characterPositionInLine,
                             1,
-                            "A04",
-                            "Curly bracket resulting in negative brace level",
-                            "Remove the curly bracket"
+                            Error.A04
                     );
 
                     // we then tell the lexer that an error occurred
@@ -256,14 +249,12 @@ public class Lexer {
                         source.skip();
                     }
                 } else {
-                    ErrorPrinter.printError(
+                    ErrorPrinter.newPrintError(
                             file,
                             lineCounter,
                             characterPositionInLine,
                             1,
-                            "A10",
-                            "Unexpected slash",
-                            "Try with \"//\" or \"/*\""
+                            Error.A10
                     );
 
                     // we then tell the lexer that an error occurred
@@ -281,6 +272,12 @@ public class Lexer {
                     // we then read an identifier
                     readIdentifier();
 
+                    // if the identifier is invalid,
+                    // we leave the scanToken method
+                    if (hasError) {
+                        return;
+                    }
+
                     // we check if the identifier is followed by a space,
                     // a square bracket or a parenthesis
                     if (source.peek(SourceStream.NEXT) != ' ' &&
@@ -288,14 +285,12 @@ public class Lexer {
                             source.peek(SourceStream.NEXT) != '(') {
                         // if the identifier isn't followed by
                         // one of those characters, we print an error
-                        ErrorPrinter.printError(
+                        ErrorPrinter.newPrintError(
                                 file,
                                 lineCounter,
                                 characterPositionInLine,
                                 1,
-                                "A05",
-                                "Expected space after identifier",
-                                "Add a space at the end of the identifier"
+                                Error.A05
                         );
 
                         // we then tell the lexer that an error occurred
@@ -311,14 +306,15 @@ public class Lexer {
                 } else {
                     // if the character isn't a lowercase letter or a digit,
                     // then we print an error
-                    ErrorPrinter.printError(
+                    Error error = Error.A01;
+                    ErrorPrinter.newPrintError(
                             file,
                             lineCounter,
                             characterPositionInLine,
                             1,
-                            "A01",
-                            "Unexpected character: \"" + c + '"',
-                            "Try removing the character"
+                            error.getErrorID(),
+                            error.formatErrorMessage(String.valueOf(c)),
+                            error.getSolutions()
                     );
 
                     // we then tell the lexer that an error occurred
@@ -356,21 +352,16 @@ public class Lexer {
         TokenType type = Keywords.get(identifier);
         // if the identifier doesn't exist, then we print an error
         if (type == null) {
-            ErrorPrinter.printError(
+            Error error = Error.A02;
+            ErrorPrinter.newPrintError(
                     file,
                     lineCounter,
                     characterPositionInLine,
                     identifier.length(),
-                    "A02",
-                    "Unknown keyword: " + identifier,
-                    "Use a valid keyword"
+                    error.getErrorID(),
+                    error.formatErrorMessage(identifier),
+                    error.getSolutions()
             );
-
-            // as keywords can't have uppercase letters,
-            // we show a solution telling the user to remove uppercase letters
-            if (StringUtils.hasUpperCaseLetters(identifier)) {
-                ErrorPrinter.printSolution("Use lowercase letters for keywords");
-            }
 
             // we then tell the lexer that an error occurred
             hasError = true;
@@ -408,14 +399,12 @@ public class Lexer {
             addToken(NUMBER, Integer.parseInt(number));
         } catch (NumberFormatException e) {
             // if the integer is too big, we print an error
-            ErrorPrinter.printError(
+            ErrorPrinter.newPrintError(
                     file,
                     lineCounter,
                     characterPositionInLine,
                     number.length(),
-                    "A11",
-                    "Number too big",
-                    "Make sure that the number isn't above 2,147,483,647"
+                    Error.A11
             );
 
             // we then tell the lexer that an error occurred
@@ -444,14 +433,12 @@ public class Lexer {
             if (next == '\n') {
                 // if the name is unterminated,
                 // we print an error
-                ErrorPrinter.printError(
+                ErrorPrinter.newPrintError(
                         file,
                         lineCounter,
                         characterPositionInLine,
                         0,
-                        "A07",
-                        "Unterminated name",
-                        "Add a double quote at the end of the name"
+                        Error.A07
                 );
 
                 // we then tell the lexer that an error occurred
@@ -478,18 +465,13 @@ public class Lexer {
         if (!StringUtils.isSnakeCase(name)) {
             // if the name isn't in snake case,
             // we print an error
-            ErrorPrinter.printError(
+            ErrorPrinter.newPrintError(
                     file,
                     lineCounter,
                     characterPositionInLine,
                     name.length(),
-                    "A06",
-                    "Names must be in snake_case",
-                    "Change all uppercase letters to lowercase"
+                    Error.A06
             );
-
-            ErrorPrinter.printSolution("Use underscores for spaces");
-            ErrorPrinter.printSolution("Make sure the name does not contain numbers");
 
             // we then tell the lexer that an error occurred
             hasError = true;

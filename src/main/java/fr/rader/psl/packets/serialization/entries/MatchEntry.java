@@ -1,23 +1,16 @@
-package fr.rader.psl.packets.entries;
+package fr.rader.psl.packets.serialization.entries;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MatchEntry extends PacketEntry {
 
-    private final int value;
-
     private List<PacketEntry> entries;
 
-    public MatchEntry(int value) {
+    public MatchEntry() {
         super(null);
 
-        this.value = value;
         this.entries = new ArrayList<>();
-    }
-
-    public int getValue() {
-        return value;
     }
 
     public List<PacketEntry> getEntries() {
@@ -31,8 +24,7 @@ public class MatchEntry extends PacketEntry {
     @Override
     public String toString() {
         return "MatchEntry{" +
-                "value='" + value + '\'' +
-                ", entries=" + entries +
+                "entries=" + entries +
                 '}';
     }
 }

@@ -16,6 +16,7 @@ public class Logger {
     /** Log Labels */
     private static final String INFO_LABEL = "[INFO]";
 
+    private static final String YAY_LABEL = "[YAY]";
     private static final String WARN_LABEL = "[WARN]";
     private static final String ERROR_LABEL = "[ERROR]";
     private static final String KRAKEN_LABEL = "[KRAKEN]";
@@ -32,6 +33,14 @@ public class Logger {
 
     public static void info(LoggerChannel channel, String message) {
         write(channel, INFO_LABEL, message);
+    }
+
+    public static void yay(String message) {
+        yay(LoggerChannel.DEFAULT, message);
+    }
+
+    public static void yay(LoggerChannel channel, String message) {
+        write(channel, YAY_LABEL, message);
     }
 
     public static void warn(String message) {

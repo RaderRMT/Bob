@@ -5,5 +5,5 @@ public class TokenKind {
     public static final byte KIND_NONE = 1;
     public static final byte KIND_TYPE = 2;
     public static final byte KIND_COMPARATOR = 4;
-    public static final byte KIND_NUMBER = 8;
+    public static final byte KIND_ARRAY_INDEX = 8;
 }

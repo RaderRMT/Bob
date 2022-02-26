@@ -1,4 +1,4 @@
-package fr.rader.psl.packets.entries;
+package fr.rader.psl.packets.serialization.entries;
 
 public class PacketEntry {
 

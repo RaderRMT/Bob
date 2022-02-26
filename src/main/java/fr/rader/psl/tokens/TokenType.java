@@ -23,21 +23,21 @@ public enum TokenType {
 
     // types:
     BOOLEAN                 (KIND_TYPE),                // 1 byte
-    BYTE                    (KIND_TYPE | KIND_NUMBER),  // 1 byte
-    SHORT                   (KIND_TYPE | KIND_NUMBER),  // 2 bytes
-    INT                     (KIND_TYPE | KIND_NUMBER),  // 4 bytes
-    LONG                    (KIND_TYPE | KIND_NUMBER),  // 8 bytes
+    BYTE                    (KIND_TYPE | KIND_ARRAY_INDEX),  // 1 byte
+    SHORT                   (KIND_TYPE | KIND_ARRAY_INDEX),  // 2 bytes
+    INT                     (KIND_TYPE | KIND_ARRAY_INDEX),  // 4 bytes
+    LONG                    (KIND_TYPE),                // 8 bytes
     STRING                  (KIND_TYPE),                // Depends on previous data
-    FLOAT                   (KIND_TYPE | KIND_NUMBER),  // 4 bytes
-    DOUBLE                  (KIND_TYPE | KIND_NUMBER),  // 8 bytes
-    VARINT                  (KIND_TYPE | KIND_NUMBER),  // 1 - 5 bytes
-    VARLONG                 (KIND_TYPE | KIND_NUMBER),  // 1 - 10 bytes
+    FLOAT                   (KIND_TYPE),                // 4 bytes
+    DOUBLE                  (KIND_TYPE),                // 8 bytes
+    VARINT                  (KIND_TYPE | KIND_ARRAY_INDEX),  // 1 - 5 bytes
+    VARLONG                 (KIND_TYPE),                // 1 - 10 bytes
 
     METADATA                (KIND_TYPE),                // Size depends on previous data
     CHAT                    (KIND_TYPE),                // Size depends on previous data
     NBT                     (KIND_TYPE),                // Size depends on previous data
     POSITION                (KIND_TYPE),                // 8 bytes
-    ANGLE                   (KIND_TYPE | KIND_NUMBER),  // 1 byte
+    ANGLE                   (KIND_TYPE),  // 1 byte
     UUID                    (KIND_TYPE),                // 16 bytes
 
     ARRAY                   (KIND_NONE),                // Size depends on previous data
@@ -72,7 +72,7 @@ public enum TokenType {
     }
 
     public boolean isNumber() {
-        return (this.tokenType & KIND_NUMBER) != 0;
+        return (this.tokenType & KIND_ARRAY_INDEX) != 0;
     }
 
     public boolean isComparator() {

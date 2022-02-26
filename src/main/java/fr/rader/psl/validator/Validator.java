@@ -3,11 +3,12 @@ package fr.rader.psl.validator;
 import fr.rader.psl.tokens.Token;
 import fr.rader.psl.tokens.TokenList;
 import fr.rader.psl.tokens.TokenType;
+import fr.rader.utils.errors.Error;
 import fr.rader.utils.errors.ErrorPrinter;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Stack;
 
 import static fr.rader.psl.tokens.TokenType.*;
 
@@ -19,18 +20,21 @@ public class Validator {
     /** The PSL source */
     private final File source;
 
+    /** This holds the variables in the current scope.
+     * Once we leave a code block, we pop the stack.
+     * The String is the variable's name.
+     * The TokenType is the variable's type. */
+    private final Stack<HashMap<String, TokenType>> variables;
+
     /** Used to tell the validator is the source is valid.
      * If this is false, it's going to stop validating */
     private boolean isSourceValid = true;
 
-    /** This holds all the variables
-     * The String key is the variable's name, and the
-     * TokenType value is the variable's type */
-    private final Map<String, TokenType> variables = new HashMap<>();
-
     public Validator(TokenList tokens, File source) {
         this.tokens = tokens;
         this.source = source;
+
+        this.variables = new Stack<>();
     }
 
     public void validate() {
@@ -52,18 +56,13 @@ public class Validator {
 
         // check if we're at the end of file.
         // only one packet declaration per PSL file
-        // is allowed. if there's a packet that isn't EOF,
+        // is allowed. If there is a token that isn't EOF,
         // we then tell the validator that the source isn't valid
         if (isSourceValid && !tokens.peek().getType().equals(EOF)) {
-            // we throw an error
-            ErrorPrinter.printError(
+            ErrorPrinter.newPrintError(
                     source,
                     tokens.peek().getLine(),
-                    0,
-                    0,
-                    "A17",
-                    "Unexpected token after end of packet definition",
-                    "Remove everything after the packet definition"
+                    Error.A17
             );
 
             // and then tell the validator that
@@ -73,15 +72,18 @@ public class Validator {
     }
 
     private void validateBlock() {
+        // add a new variable map to the variables stack
+        HashMap<String, TokenType> scopeVariables = variables.push(new HashMap<>());
+
         // we loop through the code until the source
-        // isn't valid, or if we found the corresponding }
+        // isn't invalid, or if we found the corresponding }
         while (isSourceValid) {
             // we get the token to check
             Token token = tokens.get();
             // we get the token type
             TokenType type = token.getType();
 
-            // we leave the method if we find a }
+            // we leave the method is we find a }
             if (type.equals(CLOSE_CURLY_BRACKET)) {
                 break;
             }
@@ -91,10 +93,11 @@ public class Validator {
             // the same line
             int line = token.getLine();
 
-            // check if the token is a type
+            // we check if the token is a type
             if (type.isType()) {
-                // if it is, we validate the variable
-                validateVariable(line, type);
+                // if the token is a type,
+                // we validate the variable
+                validateVariable(line, type, scopeVariables);
 
                 // and we continue
                 continue;
@@ -102,8 +105,9 @@ public class Validator {
 
             // we check if the token is an array
             if (type.equals(ARRAY)) {
-                // if it is, we validate the array
-                validateArray(line);
+                // if the token is an array,
+                // we validate the array
+                validateArray(line, scopeVariables);
 
                 // and we continue
                 continue;
@@ -129,64 +133,68 @@ public class Validator {
 
             // if the token we're reading isn't expected,
             // we throw an error
-            ErrorPrinter.printError(
+            Error error = Error.A18;
+            ErrorPrinter.newPrintError(
                     source,
                     line,
-                    0,
-                    0,
-                    "A12",
-                    "Unexpected token: " + type.getFriendlyName(),
-                    "Remove the \"" + type.getFriendlyName() + "\" and try again"
+                    error.getErrorID(),
+                    error.formatErrorMessage(type.getFriendlyName()),
+                    error.formatSolutions(type.getFriendlyName())
             );
 
             // then we tell the validator that the source isn't valid
             isSourceValid = false;
         }
+
+        // then we pop our scope variables
+        // because we're leaving the scope
+        variables.pop();
     }
 
-    private void validateVariable(int line, TokenType type) {
+    private void validateVariable(int line, TokenType type, HashMap<String, TokenType> scopeVariables) {
         // quick summary of what this is doing:
         //
         // peek for [
         // if [ (
-        //      check for [
-        //      check for name
-        //      check if name is a key in variables.
-        //          if it is, we check its type
-        //      check for ]
+        //     check for [
+        //     check for name
+        //     check if name is in the variables stack.
+        //         if it is, we check its type
+        //     check for ]
         // )
         //
         // check for name
         // check for semicolon
-        // add variable to variables map
+        // add variable to variables stack
 
         // check if we're declaring an array
         if (tokens.peek().getType().equals(OPEN_SQUARE_BRACKET)) {
-            // if we are, we check for an open square bracket
+            // if we are declaring an array,
+            // we check for an open square bracket
             expect(line, OPEN_SQUARE_BRACKET);
 
-            // then we peek the next token. it should be a
-            // name. we keep it in a variable because
-            // TokenList doesn't have a method to get the current token
+            // then we peek the next token. it must be a name.
+            // we keep it in a variable because TokenList doesn't
+            // have a method to get the current token
             Token arrayLengthVariable = tokens.peek();
             // then we check if the token is a name.
-            // this name is the array's length
+            // this is the array's length
             expect(line, NAME);
             // then we check if the array length variable is a number
-            checkVariableIsNumber(arrayLengthVariable);
+            checkIfVariableIsNumber(arrayLengthVariable);
 
             // then we check for a close square bracket
             expect(line, CLOSE_SQUARE_BRACKET);
 
             // if the source is not valid at this point,
-            // we then leave this method
+            // we leave this method
             if (!isSourceValid) {
                 return;
             }
 
             // if the source is still valid,
-            // we change the type to be an array
-            // because that's what the variable is now.
+            // we change the type to an array
+            // because that's what the variable is now
             type = ARRAY;
         }
 
@@ -199,15 +207,15 @@ public class Validator {
         expect(line, NAME);
         // then we check if the variable already exists
         if (isSourceValid && variableExists(variableName)) {
-            // if it already exists, we throw an error
-            ErrorPrinter.printError(
+            // if the variable already exists,
+            // we throw an error
+            Error error = Error.A16;
+            ErrorPrinter.newPrintError(
                     source,
                     line,
-                    0,
-                    0,
-                    "A16",
-                    "Variable already defined: " + variableName.getValue(),
-                    "Try using a different name for the variable"
+                    error.getErrorID(),
+                    error.formatErrorMessage((String) variableName.getValue()),
+                    error.getSolutions()
             );
 
             // then we tell the validator that the source isn't valid
@@ -216,24 +224,25 @@ public class Validator {
             return;
         }
 
-        // if everything is still valid,
+        // is everything is still valid,
         // we check if the next token is a semicolon
         expect(line, SEMICOLON);
 
         // we check if the source is valid
         // if it isn't, we don't want to add the
-        // variable to the map because we don't even know
+        // variable to the stack because we don't even know
         // if it's the correct type or not
         if (isSourceValid) {
-            // we add the variable to variables map if everything is ok
-            variables.put(
-                    (String) variableName.getValue(),   // the variable name
-                    type                                // the variable type
+            // we add the variable to the
+            // variables stack if everything is ok
+            scopeVariables.put(
+                    (String) variableName.getValue(),
+                    type
             );
         }
     }
 
-    private void validateArray(int line) {
+    private void validateArray(int line, HashMap<String, TokenType> scopeVariables) {
         // quick summary of what this is doing:
         //
         // check for (
@@ -242,8 +251,8 @@ public class Validator {
         // check for name
         // check for )
         // check for {
-        // add variable to variables map
-        // validate everything until matching }
+        // add variable to variables stack
+        // validate everything until the matching }
 
         // we check for a (
         expect(line, OPEN_PAREN);
@@ -256,7 +265,7 @@ public class Validator {
         // this name is the array's length
         expect(line, NAME);
         // then we check if the array length variable is a number
-        checkVariableIsNumber(arrayLengthVariable);
+        checkIfVariableIsNumber(arrayLengthVariable);
 
         // we then check for a comma
         expect(line, COMMA);
@@ -266,19 +275,20 @@ public class Validator {
         // TokenList doesn't have a method to get the current token
         Token arrayName = tokens.peek();
         // then we check if the token is a name.
-        // this name is the variable's name
+        // this name is the array's name
         expect(line, NAME);
-        // then we check if the variable already exists
+        // then we check if the variable already exists.
+        // we skip the check if the source is invalid
         if (isSourceValid && variableExists(arrayName)) {
-            // if it already exists, we throw an error
-            ErrorPrinter.printError(
+            // if the variable already exists,
+            // we throw an error
+            Error error = Error.A16;
+            ErrorPrinter.newPrintError(
                     source,
                     line,
-                    0,
-                    0,
-                    "A16",
-                    "Variable already defined: " + arrayName.getValue(),
-                    "Try using a different name for the variable"
+                    error.getErrorID(),
+                    error.formatErrorMessage((String) arrayName.getValue()),
+                    error.getSolutions()
             );
 
             // then we tell the validator that the source isn't valid
@@ -287,19 +297,21 @@ public class Validator {
             return;
         }
 
-        // we then check for a )
+        // if it's still valid,
+        // we check for a )
         expect(line, CLOSE_PAREN);
-        // and finally we check for a {
+        // and finally, we check for a {
         expect(line, OPEN_CURLY_BRACKET);
 
-        // we check if the source is valid
-        // if it isn't, we don't want to add the
-        // variable to the map
+        // we then check if the source is valid.
+        // if it isn't, we don't want to add
+        // the variable to the variables stack
         if (isSourceValid) {
-            // we add the variable to variables map if everything is ok
-            variables.put(
-                    (String) arrayName.getValue(),  // the variable name
-                    ARRAY                           // the variable type
+            // if the source is still valid,
+            // we add the variable to the variables stack
+            scopeVariables.put(
+                    (String) arrayName.getValue(),
+                    ARRAY
             );
 
             // then we validate the array block
@@ -332,14 +344,13 @@ public class Validator {
         // then we check if the variable doesn't exist
         if (isSourceValid && !variableExists(variableToCompare)) {
             // if it doesn't exist, we print an error
-            ErrorPrinter.printError(
+            Error error = Error.A14;
+            ErrorPrinter.newPrintError(
                     source,
                     variableToCompare.getLine(),
-                    0,
-                    0,
-                    "A14",
-                    "Unknown variable: " + variableToCompare.getValue(),
-                    "Try using a variable you already created"
+                    error.getErrorID(),
+                    error.formatErrorMessage((String) variableToCompare.getValue()),
+                    error.getSolutions()
             );
 
             // then we tell the validator that the source isn't valid
@@ -361,14 +372,13 @@ public class Validator {
         // and we check if the variable is a number
         if (!type.isNumber() && !type.equals(BOOLEAN)) {
             // if it isn't, we throw an error
-            ErrorPrinter.printError(
+            Error error = Error.A15;
+            ErrorPrinter.newPrintError(
                     source,
                     line,
-                    0,
-                    0,
-                    "A15",
-                    "Invalid variable type, got " + type.getFriendlyName() + " for variable \"" + variableToCompare.getValue() + '"',
-                    "Try using a variable that can hold numbers"
+                    error.getErrorID(),
+                    error.formatErrorMessage(type.getFriendlyName(), (String) variableToCompare.getValue()),
+                    error.getSolutions()
             );
 
             // then we tell the validator that the source isn't valid
@@ -387,14 +397,13 @@ public class Validator {
             // and we check if the token's type is a comparator
             if (!comparatorToken.getType().isComparator()) {
                 // if it isn't, we throw an error
-                ErrorPrinter.printError(
+                Error error = Error.A12;
+                ErrorPrinter.newPrintError(
                         source,
                         line,
-                        0,
-                        0,
-                        "A12",
-                        "Unexpected token: " + comparatorToken.getType().getFriendlyName(),
-                        "Try using a comparator instead"
+                        error.getErrorID(),
+                        error.formatErrorMessage(comparatorToken.getType().getFriendlyName()),
+                        error.getSolutions()
                 );
 
                 // then we tell the validator that the source isn't valid
@@ -431,7 +440,7 @@ public class Validator {
         // then we check if the token is a name
         expect(line, NAME);
         // then we check if the variable is a number
-        checkVariableIsNumber(matchVariable);
+        checkIfVariableIsNumber(matchVariable);
 
         // check for a {
         expect(line, OPEN_CURLY_BRACKET);
@@ -456,28 +465,28 @@ public class Validator {
         tokens.skip();
     }
 
-    private void checkVariableIsNumber(Token token) {
-        // we don't check the token if the
-        // source is not valid
+    private void checkIfVariableIsNumber(Token token) {
+        // we don't check the token
+        // if the source isn't valid
         if (!isSourceValid) {
             return;
         }
 
-        // we get the token type from the variables map
-        // using the token's value as the map's key
+        // we get the token type from the variables stack
+        // using the token's value as the key
         TokenType variable = getVariableType(token);
         // if the variable type is null, that means
-        // the variable does not exist
+        // the variable doesn't exist
         if (variable == null) {
-            // we can then throw an error
-            ErrorPrinter.printError(
+            // if the variable doesn't exist,
+            // we throw an error
+            Error error = Error.A14;
+            ErrorPrinter.newPrintError(
                     source,
                     token.getLine(),
-                    0,
-                    0,
-                    "A14",
-                    "Unknown variable: " + token.getValue(),
-                    "Try using a variable you already created"
+                    error.getErrorID(),
+                    error.formatErrorMessage((String) token.getValue()),
+                    error.getSolutions()
             );
 
             // we can tell the validator that
@@ -489,15 +498,15 @@ public class Validator {
 
         // we check if the variable isn't a number
         if (!variable.isNumber()) {
-            // if it isn't a number, we throw an error
-            ErrorPrinter.printError(
+            // if the variable isn't a number,
+            // we throw an error
+            Error error = Error.A15;
+            ErrorPrinter.newPrintError(
                     source,
                     token.getLine(),
-                    0,
-                    0,
-                    "A15",
-                    "Invalid variable type, got " + variable.getFriendlyName() + " for variable \"" + token.getValue() + '"',
-                    "Try using a variable that can hold numbers"
+                    error.getErrorID(),
+                    error.formatErrorMessage(variable.getFriendlyName(), (String) token.getValue()),
+                    error.getSolutions()
             );
 
             // we can tell the validator that
@@ -514,7 +523,7 @@ public class Validator {
      * {@code false} otherwise
      */
     private boolean variableExists(Token token) {
-        return variables.containsKey((String) token.getValue());
+        return getVariableType(token) != null;
     }
 
     /**
@@ -525,12 +534,25 @@ public class Validator {
      * {@code null} otherwise
      */
     private TokenType getVariableType(Token token) {
-        return variables.get((String) token.getValue());
+        String key = (String) token.getValue();
+
+        // loop through all the scopes
+        for (HashMap<String, TokenType> scopeVariables : variables) {
+            // if the scope contains the variable
+            if (scopeVariables.containsKey(key)) {
+                // we return the type
+                return scopeVariables.get(key);
+            }
+        }
+
+        // if the variable doesn't exist,
+        // we return null
+        return null;
     }
 
     private void expect(int line, TokenType type) {
-        // we don't check the token if the
-        // source is not valid
+        // we don't check the token if
+        // the source is not valid
         if (!isSourceValid) {
             return;
         }
@@ -541,14 +563,13 @@ public class Validator {
         // we check if they're not the same
         if (!token.getType().equals(type)) {
             // if they're not the same, we throw an error
-            ErrorPrinter.printError(
+            Error error = Error.A12;
+            ErrorPrinter.newPrintError(
                     source,
                     token.getLine(),
-                    0,
-                    0,
-                    "A12",
-                    "Unexpected token, got a " + token.getType().getFriendlyName() + " instead of a " + type.getFriendlyName(),
-                    "Try using a " + type.getFriendlyName() + " instead of a " + token.getType().getFriendlyName()
+                    error.getErrorID(),
+                    error.formatErrorMessage(token.getType().getFriendlyName(), type.getFriendlyName()),
+                    error.formatSolutions(type.getFriendlyName())
             );
 
             // we tell the validator that the source isn't valid
@@ -558,17 +579,17 @@ public class Validator {
             return;
         }
 
-        // then we check if both tokens are on the same line
+        // then we check if the token is on the correct line
         if (token.getLine() != line) {
-            // if they aren't, we throw an error
-            ErrorPrinter.printError(
+            // if it isn't on the correct line,
+            // we throw an error
+            Error error = Error.A13;
+            ErrorPrinter.newPrintError(
                     source,
                     token.getLine(),
-                    0,
-                    0,
-                    "A13",
-                    "Unexpected line break before the " + token.getType().getFriendlyName(),
-                    "Remove the line break before the " + token.getType().getFriendlyName()
+                    error.getErrorID(),
+                    error.formatErrorMessage(token.getType().getFriendlyName()),
+                    error.formatSolutions(token.getType().getFriendlyName())
             );
 
             // and we tell the validator that the source isn't valid

@@ -1,4 +1,4 @@
-package fr.rader.psl.packets.entries;
+package fr.rader.psl.packets.serialization.entries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +7,9 @@ public class SimpleArrayEntry extends PacketEntry {
 
     private final List<VariableEntry> variables;
 
-    private final int length;
-
-    public SimpleArrayEntry(int length, String name) {
+    public SimpleArrayEntry(String name) {
         super(name);
 
-        this.length = length;
         this.variables = new ArrayList<>();
     }
 
@@ -20,16 +17,12 @@ public class SimpleArrayEntry extends PacketEntry {
         return variables;
     }
 
-    public int getLength() {
-        return length;
-    }
-
     public void addVariable(VariableEntry value) {
         variables.add(value);
     }
 
     public void setVariable(int index, Object value) {
-        variables.get(index).setValue(value);
+        variables.add(index, new VariableEntry(null, value));
     }
 
     public VariableEntry getVariable(int index) {

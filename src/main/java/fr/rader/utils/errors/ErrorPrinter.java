@@ -8,83 +8,144 @@ import java.io.File;
 
 public class ErrorPrinter {
 
-    public static void printError(File file, int lineIndex, int start, int size, String errorID, String message, String solution) {
-        // print the error
-        print(file, lineIndex, start, size, errorID, message);
-
-        // print the solution if there is one
-        if (solution != null) {
-            printSolution(solution);
-        }
+    /**
+     * Print a nice error message to the user
+     *
+     * @param error the error (not formatted)
+     */
+    public static void newPrintError(Error error) {
+        newPrintError(
+                null,
+                0,
+                error
+        );
     }
 
-    private static void print(File file, int lineIndex, int start, int size, String errorID, String message) {
-        // get the line at the given index in the file
-        String line = LineReader.getLine(file, lineIndex);
-        // return if the line is null
-        if (line == null) {
-            return;
+    /**
+     * Print a nice error message to the user
+     *
+     * @param file source file
+     * @param line line in the source that has the error
+     * @param errorID the error id (please refer to {@link Error})
+     * @param errorMessage the error message
+     * @param solutions the possible solution(s) to fix the issue
+     */
+    public static void newPrintError(File file, int line, String errorID, String errorMessage, String[] solutions) {
+        newPrintError(
+                file,
+                line,
+                0,
+                0,
+                errorID,
+                errorMessage,
+                solutions
+        );
+    }
+
+    /**
+     * Print a nice error message to the user
+     *
+     * @param file source file
+     * @param line line in the source that has the error
+     * @param error the error (not formatted)
+     */
+    public static void newPrintError(File file, int line, Error error) {
+        newPrintError(
+                file,
+                line,
+                0,
+                0,
+                error
+        );
+    }
+
+    /**
+     * Print a nice error message to the user
+     *
+     * @param file source file
+     * @param line line in the source that has the error
+     * @param start start index for the underline
+     * @param size size of the underline
+     * @param error the error (not formatted)
+     */
+    public static void newPrintError(File file, int line, int start, int size, Error error) {
+        newPrintError(
+                file,
+                line,
+                start,
+                size,
+                error.getErrorID(),
+                error.getErrorMessage(),
+                error.getSolutions()
+        );
+    }
+
+    /**
+     * Print a nice error message to the user
+     *
+     * @param file source file
+     * @param line line in the source that has the error
+     * @param start start index for the underline
+     * @param size size of the underline
+     * @param errorID the error id (please refer to {@link Error})
+     * @param errorMessage the error message
+     * @param solutions the possible solution(s) to fix the issue
+     */
+    public static void newPrintError(File file, int line, int start, int size, String errorID, String errorMessage, String[] solutions) {
+        Logger.error("Error " + errorID + ":");
+        Logger.error("");
+
+        // if we give a file to this method,
+        // we'll use it to print the line
+        // that has the error
+        if (file != null) {
+            // we get the line
+            String lineWithError = LineReader.getLine(file, line);
+            // we return if we can't get the line
+            if (lineWithError == null) {
+                return;
+            }
+
+            Logger.error(line + ":  " + lineWithError.trim());
+
+            // we check if we have to underline it
+            if (start != 0 && size != 0) {
+                // we remove the leading spaces from the start index
+                start -= StringUtils.leadingSpaces(lineWithError);
+
+                // we build the underline
+                StringBuilder underline = new StringBuilder("    ");
+                for (int i = 0; i < start + size; i++) {
+                    // as long as i is less than start + size,
+                    // we add spaces to the underline to put it
+                    // right under what we want to underline
+                    underline.append((i < start) ? " " : "-");
+                }
+
+                // we print the underline
+                Logger.error(underline.toString());
+            }
         }
 
-        // count the number of leading spaces
-        int leadingSpaces = StringUtils.leadingSpaces(line);
-
-        // remove the leading spaces from the start index
-        start -= leadingSpaces;
-
-        // trim the line because we don't want
-        // to show the leading spaces
-        line = line.trim();
-
-        // build the underline string
-        String errorUnderline = "    ";
-        for (int i = 0; i < start + size; i++) {
-            errorUnderline += (i < start) ? " " : "-";
-        }
-
-        // build the error message
-        String errorMessage = "    ";
+        // we build the error message
+        StringBuilder error = new StringBuilder("    ");
         for (int i = 0; i < start; i++) {
-            errorMessage += " ";
+            error.append(" ");
         }
 
-        // append the message to the error
-        errorMessage += "> " + message;
+        // and we print it
+        Logger.error(error + "> " + errorMessage);
 
-        // print the error
-        printLines(
-                "Error " + errorID + ":",
-                "",
-                lineIndex + ":  " + line,
-                errorUnderline,
-                errorMessage
-        );
-    }
+        // if the solutions array isn't empty,
+        // we print the solutions
+        if (!solutions[0].isEmpty()) {
+            Logger.error("");
+            Logger.error("Suggestion" + (solutions.length > 1 ? "s" : "") + ":");
 
-    public static void printSimpleError(String errorID, String message, String solution) {
-        printLines(
-                "Error " + errorID + ":",
-                "",
-                "> " + message
-        );
-
-        if (solution != null) {
-            printSolution(solution);
-        }
-    }
-
-    public static void printSolution(String solution) {
-        // print the solution
-        printLines(
-                "",
-                "Suggestion:",
-                "    > " + solution
-        );
-    }
-
-    private static void printLines(String... lines) {
-        for (String line : lines) {
-            Logger.error(line);
+            // print each solutions
+            for (String solution : solutions) {
+                Logger.error("    > " + solution);
+            }
         }
     }
 }

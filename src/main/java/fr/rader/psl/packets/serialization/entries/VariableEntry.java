@@ -1,7 +1,10 @@
-package fr.rader.psl.packets.entries;
+package fr.rader.psl.packets.serialization.entries;
 
 public class VariableEntry extends PacketEntry {
 
+    /**
+     * The variable's value
+     */
     private Object value;
 
     public VariableEntry(String name, Object value) {

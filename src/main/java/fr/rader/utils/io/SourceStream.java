@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class SourceStream extends FileInputStream {
 
-    // buffer size for out data array
+    // buffer size for our data array
     private static final byte BUFFER_SIZE = 3;
 
     // data[0] -> previous character

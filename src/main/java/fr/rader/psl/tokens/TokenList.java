@@ -25,19 +25,6 @@ public class TokenList {
     }
 
     /**
-     * Get a token from the list at {@code index}
-     *
-     * @return token or null if out of bound
-     */
-    public Token get() {
-        if (index == tokens.size()) {
-            return null;
-        }
-
-        return tokens.get(index++);
-    }
-
-    /**
      * Skip the current token
      */
     public void skip() {
@@ -55,6 +42,21 @@ public class TokenList {
         }
 
         return tokens.get(index);
+    }
+
+    /**
+     * Get a token from the list at {@code index}
+     *
+     * @return token or null if out of bound
+     */
+    public Token get() {
+        // we first peek the token from the list,
+        // then we increment the index.
+        // this avoids having the same method twice
+        Token token = peek();
+
+        index++;
+        return token;
     }
 
     /**
