@@ -40,7 +40,9 @@ public class StringUtils {
 
     public static boolean isSnakeCase(String string) {
         for (char c : string.toCharArray()) {
-            if (c != '_' && !CharacterUtils.isAlphaLower(c)) {
+            if (c != '_' &&
+                    !CharacterUtils.isAlphaLower(c) &&
+                    !CharacterUtils.isDigit(c)) {
                 return false;
             }
         }

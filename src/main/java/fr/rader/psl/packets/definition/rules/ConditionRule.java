@@ -38,13 +38,13 @@ public class ConditionRule extends Rule {
     public boolean isBranchTaken(int valueToCheck) {
         switch (comparison) {
             case LESS_SIGN:
-                return value < valueToCheck;
+                return valueToCheck < value;
             case LESS_EQUAL_SIGN:
-                return value <= valueToCheck;
+                return valueToCheck <= value;
             case GREATER_SIGN:
-                return value > valueToCheck;
+                return valueToCheck > value;
             case GREATER_EQUAL_SIGN:
-                return value >= valueToCheck;
+                return valueToCheck >= value;
             case EQUAL_EQUAL_SIGN:
                 return value == valueToCheck;
             case BANG_EQUAL_SIGN:
@@ -54,6 +54,10 @@ public class ConditionRule extends Rule {
                 Logger.error("Unexpected comparison");
                 return false;
         }
+    }
+
+    public int getValue() {
+        return value;
     }
 
     public List<Rule> getBranchRules() {

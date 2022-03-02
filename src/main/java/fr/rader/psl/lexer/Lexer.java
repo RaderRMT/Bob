@@ -71,9 +71,15 @@ public class Lexer {
         return tokens;
     }
 
-    public void scanToken() throws IOException {
+    private void scanToken() throws IOException {
         // fetch the next character
         char c = source.next();
+
+        // increment the character position.
+        // this now points to the next character.
+        // if we call scanToken() again, it'll point
+        // to source.next()
+        characterPositionInLine++;
 
         // fancy switch case for our character
         switch (c) {
@@ -235,6 +241,9 @@ public class Lexer {
                     while (source.hasNext() && !nextCharIs('\n')) {
                         source.skip();
                     }
+
+                    // increment the line counter
+                    lineCounter++;
                 } else if (nextCharIs('*')) {
                     // as this is a multiple lines comment, we skip
                     // the characters until we find */ (the end of our comment)
@@ -244,6 +253,11 @@ public class Lexer {
                             // consume the character if it's the same as the one passed as the
                             // argument, so we just break out of the while loop
                             break;
+                        }
+
+                        // increment the line counter if we're reading a carriage return
+                        if (source.peek(SourceStream.CURRENT) == '\n') {
+                            lineCounter++;
                         }
 
                         source.skip();
@@ -324,12 +338,6 @@ public class Lexer {
                     return;
                 }
         }
-
-        // increment the character position.
-        // this now points to the next character.
-        // if we call scanToken() again, it'll point
-        // to source.next()
-        characterPositionInLine++;
     }
 
     private void readIdentifier() throws IOException {
@@ -461,7 +469,7 @@ public class Lexer {
         source.skip();
 
         // then we check if the name is in snake_case
-        // the name has to match this regex: [a-z_]+
+        // the name has to match this regex: [a-z0-9_]+
         if (!StringUtils.isSnakeCase(name)) {
             // if the name isn't in snake case,
             // we print an error
