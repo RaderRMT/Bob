@@ -1,5 +1,9 @@
 package fr.rader.utils.data;
 
+import fr.rader.psl.tokens.TokenType;
+import fr.rader.types.VarInt;
+import fr.rader.types.VarLong;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -92,6 +96,19 @@ public class DataWriter {
         } while (value != 0);
     }
 
+    public void writeVarLong(long value) {
+        do {
+            byte temp = (byte) (value & 0x7f);
+            value >>>= 7;
+
+            if (value != 0) {
+                temp |= 0x80;
+            }
+
+            writeByte(temp);
+        } while (value != 0);
+    }
+
     public void writeString(String value) {
         writeByteArray(value.getBytes(StandardCharsets.UTF_8));
     }
@@ -99,6 +116,47 @@ public class DataWriter {
     public void writeUUID(UUID uuid) {
         writeLong(uuid.getMostSignificantBits());
         writeLong(uuid.getLeastSignificantBits());
+    }
+
+    public void writeFromTokenType(TokenType type, Object value) {
+        switch (type) {
+            case BOOLEAN:
+            case BYTE:
+            case ANGLE:
+                writeByte((Integer) value);
+                break;
+            case SHORT:
+                writeShort((Integer) value);
+                break;
+            case INT:
+                writeInt((Integer) value);
+                break;
+            case LONG:
+                writeLong((Long) value);
+                break;
+            case CHAT:
+            case STRING:
+                String string = (String) value;
+
+                writeVarInt(string.length());
+                writeString(string);
+                break;
+            case FLOAT:
+                writeFloat((Float) value);
+                break;
+            case DOUBLE:
+                writeDouble((Double) value);
+                break;
+            case VARINT:
+                writeVarInt(((VarInt) value).getValue());
+                break;
+            case VARLONG:
+                writeVarLong(((VarLong) value).getValue());
+                break;
+            case UUID:
+                writeUUID((UUID) value);
+                break;
+        }
     }
 
     public InputStream getInputStream() throws IOException {

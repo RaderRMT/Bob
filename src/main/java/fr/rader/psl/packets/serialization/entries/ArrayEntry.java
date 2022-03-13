@@ -70,6 +70,10 @@ public class ArrayEntry extends PacketEntry {
         this.entries.put(index, entries);
     }
 
+    public int size() {
+        return this.entries.size();
+    }
+
     @Override
     public String toString() {
         return "ArrayEntry{" +

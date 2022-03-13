@@ -4,7 +4,7 @@ import fr.rader.psl.lexer.Lexer;
 import fr.rader.psl.packets.definition.rules.*;
 import fr.rader.psl.tokens.Token;
 import fr.rader.psl.tokens.TokenList;
-import fr.rader.psl.validator.Validator;
+import fr.rader.psl.lexer.Validator;
 import fr.rader.utils.OS;
 import fr.rader.utils.logger.Logger;
 
@@ -23,6 +23,12 @@ public class PacketDefinitionFactory {
         // get the source file depending on
         // the protocol and the packet id
         File source = OS.getPSL(protocol, packetID);
+        // if the source doesn't exist,
+        // we leave the constructor
+        if (!source.exists()) {
+            return null;
+        }
+
         // we create an instance of our lexer
         // to scan our source file
         Lexer lexer = new Lexer(source);

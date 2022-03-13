@@ -7,6 +7,8 @@ public class MatchEntry extends PacketEntry {
 
     private List<PacketEntry> entries;
 
+    private int value;
+
     public MatchEntry() {
         super(null);
 
@@ -19,6 +21,14 @@ public class MatchEntry extends PacketEntry {
 
     public void setEntries(List<PacketEntry> entries) {
         this.entries = entries;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package fr.rader.psl.validator;
+package fr.rader.psl.lexer;
 
 import fr.rader.psl.tokens.Token;
 import fr.rader.psl.tokens.TokenList;

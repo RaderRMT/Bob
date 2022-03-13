@@ -86,6 +86,8 @@ public class Logger {
         exception.printStackTrace(channelPrintWriter);
 
         channelPrintWriter.flush();
+
+        exception.printStackTrace();
     }
 
     private static void write(LoggerChannel channel, String label, String message) {

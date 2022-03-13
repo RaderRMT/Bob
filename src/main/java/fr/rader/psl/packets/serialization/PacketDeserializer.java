@@ -10,28 +10,34 @@ import fr.rader.utils.data.DataReader;
 import java.io.IOException;
 import java.util.*;
 
-public class PacketDeserialization {
+public class PacketDeserializer {
 
-    private static final Stack<HashMap<String, Object>> variablesStack = new Stack<>();
+    private final Stack<HashMap<String, Object>> variablesStack = new Stack<>();
+
+    private DataReader reader;
+
+    public PacketDeserializer() {
+    }
 
     /**
      * Deserialize raw bytes from the {@link DataReader} to a {@link Packet} object based on the {@link PacketDefinition} object.
      *
      * @param definition the {@link PacketDefinition}
-     * @param reader the {@link DataReader} that holds the data
      * @return the deserialized {@link Packet}
      * @throws IOException if an I/O error occurs.
      */
-    public static Packet deserialize(PacketDefinition definition, DataReader reader) throws IOException {
+    public Packet deserialize(PacketDefinition definition) throws IOException {
+        if (this.reader == null) {
+            throw new IllegalStateException("DataReader is null!");
+        }
+
         Packet packet = new Packet();
 
         // deserialize the packet from
         // the rules in the definition
         packet.setEntry(deserializeCodeBlockFromRules(
                 // the rules
-                definition.getRules(),
-                // the reader holding the data
-                reader
+                definition.getRules()
         ));
 
         return packet;
@@ -41,11 +47,10 @@ public class PacketDeserialization {
      * Deserialize a code block from the list of {@link Rule} given as a parameter
      *
      * @param rules the set of rules used to tell how to deserialize the code block
-     * @param reader the {@link DataReader} holding the data
      * @return a list of {@link PacketEntry} deserialized from the reader
      * @throws IOException if an I/O error occurs.
      */
-    private static List<PacketEntry> deserializeCodeBlockFromRules(List<Rule> rules, DataReader reader) throws IOException {
+    private List<PacketEntry> deserializeCodeBlockFromRules(List<Rule> rules) throws IOException {
         // the entries in our code block
         List<PacketEntry> entries = new ArrayList<>();
 
@@ -59,31 +64,31 @@ public class PacketDeserialization {
             // check if our rule declares a variable definition
             if (rule instanceof VariableRule) {
                 // if it does, we deserialize the variable
-                deserializeVariable(rule, reader, entries, variablesInCodeBlock);
+                deserializeVariable(rule, entries, variablesInCodeBlock);
             }
 
             // check if our rule declares an array definition
             if (rule instanceof ArrayRule) {
                 // if it does, we deserialize the array
-                deserializeArray(rule, reader, entries);
+                deserializeArray(rule, entries);
             }
 
             // check if our rule declares a simple array definition
             if (rule instanceof SimpleArrayRule) {
                 // if it does, we deserialize the simple array
-                deserializeSimpleArray(rule, reader, entries);
+                deserializeSimpleArray(rule, entries);
             }
 
             // check if our rule declares a condition definition
             if (rule instanceof ConditionRule) {
                 // if it does, we deserialize the condition
-                deserializeCondition(rule, reader, entries);
+                deserializeCondition(rule, entries);
             }
 
             // check if our rule declares a match definition
             if (rule instanceof MatchRule) {
                 // if it does, we deserialize the match
-                deserializeMatch(rule, reader, entries);
+                deserializeMatch(rule, entries);
             }
         }
 
@@ -98,11 +103,10 @@ public class PacketDeserialization {
      * Deserialize a match from the {@link Rule}'s data
      *
      * @param rule the variable's rule containing the variable name and type
-     * @param reader the {@link DataReader} holding the data
      * @param entries the list of entries in our packet
      * @throws IOException if an I/O error occurs.
      */
-    private static void deserializeMatch(Rule rule, DataReader reader, List<PacketEntry> entries) throws IOException {
+    private void deserializeMatch(Rule rule, List<PacketEntry> entries) throws IOException {
         // we cast our rule back to a MatchRule
         MatchRule matchRule = (MatchRule) rule;
 
@@ -116,11 +120,12 @@ public class PacketDeserialization {
         List<Rule> matchPacketEntries = matchRule.getRulesForValue(value);
         if (matchPacketEntries != null) {
             // if the value has been defined in the match,
-            // we deserialize it and store it in the match entry
+            // we give the entry it's entry value
+            matchEntry.setValue(value);
+            // and we deserialize it and store it in the match entry
             matchEntry.setEntries(
                     deserializeCodeBlockFromRules(
-                            matchPacketEntries,
-                            reader
+                            matchPacketEntries
                     )
             );
         }
@@ -133,12 +138,11 @@ public class PacketDeserialization {
      * Deserialize a variable from the {@link Rule}'s data
      *
      * @param rule the variable's rule containing the variable name and type
-     * @param reader the {@link DataReader} holding the data
      * @param entries the list of entries in our packet
      * @param variablesInCodeBlock the variables in the code block
      * @throws IOException if an I/O error occurs.
      */
-    private static void deserializeVariable(Rule rule, DataReader reader, List<PacketEntry> entries, Map<String, Object> variablesInCodeBlock) throws IOException {
+    private void deserializeVariable(Rule rule, List<PacketEntry> entries, Map<String, Object> variablesInCodeBlock) throws IOException {
         // we cast our rule back to a VariableRule
         VariableRule variableRule = (VariableRule) rule;
 
@@ -167,11 +171,10 @@ public class PacketDeserialization {
      * Deserialize an array from the {@link Rule}'s data
      *
      * @param rule the variable's rule containing the variable name and type
-     * @param reader the {@link DataReader} holding the data
      * @param entries the list of entries in our packet
      * @throws IOException if an I/O error occurs.
      */
-    private static void deserializeArray(Rule rule, DataReader reader, List<PacketEntry> entries) throws IOException {
+    private void deserializeArray(Rule rule, List<PacketEntry> entries) throws IOException {
         // we cast our rule back to an ArrayRule
         ArrayRule arrayRule = (ArrayRule) rule;
 
@@ -190,8 +193,7 @@ public class PacketDeserialization {
                     i,
                     // this is the set of entry for the index
                     deserializeCodeBlockFromRules(
-                            arrayRule.getRules(),
-                            reader
+                            arrayRule.getRules()
                     )
             );
         }
@@ -204,11 +206,10 @@ public class PacketDeserialization {
      * Deserialize a simple array from the {@link Rule}'s data
      *
      * @param rule the variable's rule containing the variable name and type
-     * @param reader the {@link DataReader} holding the data
      * @param entries the list of entries in our packet
      * @throws IOException if an I/O error occurs.
      */
-    private static void deserializeSimpleArray(Rule rule, DataReader reader, List<PacketEntry> entries) throws IOException {
+    private void deserializeSimpleArray(Rule rule, List<PacketEntry> entries) throws IOException {
         // we cast our rule back to a SimpleArrayRule
         SimpleArrayRule simpleArrayRule = (SimpleArrayRule) rule;
 
@@ -237,11 +238,10 @@ public class PacketDeserialization {
      * Deserialize a condition from the {@link Rule}'s data
      *
      * @param rule the variable's rule containing the variable name and type
-     * @param reader the {@link DataReader} holding the data
      * @param entries the list of entries in our packet
      * @throws IOException if an I/O error occurs.
      */
-    private static void deserializeCondition(Rule rule, DataReader reader, List<PacketEntry> entries) throws IOException {
+    private void deserializeCondition(Rule rule, List<PacketEntry> entries) throws IOException {
         // we cast our rule back to a ConditionRule
         ConditionRule conditionRule = (ConditionRule) rule;
 
@@ -257,8 +257,7 @@ public class PacketDeserialization {
             // the branch rules from the condition rule
             conditionEntry.setEntries(
                     deserializeCodeBlockFromRules(
-                            conditionRule.getBranchRules(),
-                            reader
+                            conditionRule.getBranchRules()
                     )
             );
         }
@@ -267,7 +266,7 @@ public class PacketDeserialization {
         entries.add(conditionEntry);
     }
 
-    private static int getValueFromVariable(String variable) {
+    private int getValueFromVariable(String variable) {
         // getting the variable from the variables stack
         Object variableValue = getVariableValue(variable);
         // if the variable doesn't exist, we throw an exception.
@@ -289,7 +288,7 @@ public class PacketDeserialization {
         return value;
     }
 
-    private static Object getVariableValue(String variable) {
+    private Object getVariableValue(String variable) {
         for (HashMap<String, Object> blockVariables : variablesStack) {
             if (blockVariables.containsKey(variable)) {
                 return blockVariables.get(variable);
@@ -297,5 +296,9 @@ public class PacketDeserialization {
         }
 
         return null;
+    }
+
+    public void setDataReader(DataReader reader) {
+        this.reader = reader;
     }
 }
